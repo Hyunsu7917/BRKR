@@ -2,6 +2,7 @@
   "expo": {
     "name": "BRKR",
     "slug": "BRKR",
+    "owner": "khyunsu",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -36,6 +37,20 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "aea15446-bb6c-44be-b95f-1bda3cc8d8f2"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/aea15446-bb6c-44be-b95f-1bda3cc8d8f2"
     }
   }
 }

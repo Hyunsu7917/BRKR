@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View, Text } from "react-native";
-import MainNavigator from "./src/components/MainNavigator"; // ✅ 네비게이션 관리 파일
+import { View } from "react-native";
+import MainNavigator from "./components/MainNavigator";
 
 export default function App() {
-  const [screen, setScreen] = useState("home");
+  const [screen, setScreen] = useState("home"); // 상태 정의
 
   return (
     <View style={{ flex: 1 }}>
