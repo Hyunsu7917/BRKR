@@ -13,7 +13,7 @@ import { useSelection } from "../context/SelectionContext";
 const sitePlanOptions = {
   Magnet: ["400core", "400evo", "500evo", "600evo", "700evo"],
   Console: ["Onebay", "Twobay", "Nanobay"],
-  Autosampler: ["SampleCase 24", "SampleCase Plus", "SampleCase H&C", "SampleJet"],
+  Autosampler: ["SampleCase 24", "SampleCase Plus", "SampleCase Heated & Cooled", "SampleJet"],
   Accessories: ["BCU1", "BCU2", "MAS3", "N2Evaporator", "N2Seperator"],
   Utilities: ["UPS", "Compressor", "Air-dryer"],
 };

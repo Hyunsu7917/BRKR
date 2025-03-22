@@ -1,14 +1,14 @@
 import React from "react";
-import { View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
 import MainNavigator from "./components/MainNavigator";
-import { SelectionProvider } from "./context/SelectionContext"; // ✅ 경로 확인
+import { SelectionProvider } from "./context/SelectionContext";
 
 export default function App() {
   return (
     <SelectionProvider>
-      <View style={{ flex: 1 }}>
+      <NavigationContainer> 
         <MainNavigator />
-      </View>
+      </NavigationContainer>
     </SelectionProvider>
   );
 }
