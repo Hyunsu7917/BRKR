@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { useSelection } from "../context/SelectionContext";
+import TableView from "@/components/TableView"; // 📦 재사용 컴포넌트
 
 const API_BASE = "https://brkr-server.onrender.com/excel";
 
@@ -11,9 +12,8 @@ export default function ItemDetailScreen() {
   const { selections } = useSelection();
 
   const [sheet, setSheet] = useState("Magnet"); // 첫 화면은 Magnet
-  const [value, setValue] = useState(selections.Magnet); // 선택된 값
+  const [value, setValue] = useState(selections.Magnet);
   const [data, setData] = useState({});
-  const [headers, setHeaders] = useState([]);
 
   useEffect(() => {
     if (!value || value === "없음") return;
@@ -27,7 +27,6 @@ export default function ItemDetailScreen() {
           },
         });
         setData(res.data);
-        setHeaders(Object.keys(res.data));
       } catch (err) {
         console.log("🔴 Error fetching data:", err.message);
       }
@@ -36,70 +35,53 @@ export default function ItemDetailScreen() {
     fetchData();
   }, [sheet, value]);
 
-  const renderTable = () => {
-    return headers.map((key) => (
-      <View key={key} style={styles.row}>
-        <Text style={styles.cellHeader}>{key}</Text>
-        <Text style={styles.cellValue}>{data[key]}</Text>
-      </View>
-    ));
-  };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>항목별 정보 ({sheet})</Text>
-      <ScrollView style={styles.table}>{renderTable()}</ScrollView>
+
+      <ScrollView style={{ marginBottom: 16 }}>
+        <TableView data={data} />
+      </ScrollView>
 
       <View style={styles.buttonRow}>
         <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
           <Text>이전</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("ConsoleAndAutosamplerScreen")}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("ConsoleAndAutosamplerScreen")}
+        >
           <Text>다음</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 16,
-    },
-    title: {
-      fontSize: 20,
-      fontWeight: "bold",
-      textAlign: "center",
-      marginBottom: 12,
-    },
-    table: {
-      backgroundColor: "#f2f2f2",
-      borderRadius: 8,
-    },
-    row: {
-      flexDirection: "row",
-      padding: 10,
-      borderBottomWidth: 1,
-      borderColor: "#ccc",
-    },
-    cellHeader: {
-      flex: 1,
-      fontWeight: "bold",
-    },
-    cellValue: {
-      flex: 2,
-    },
-    buttonRow: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      marginTop: 16,
-    },
-    button: {
-      padding: 12,
-      backgroundColor: "#ddd",
-      borderRadius: 6,
-      width: 100,
-      alignItems: "center",
-    },
-  });
-  
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 12,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 16,
+  },
+  button: {
+    padding: 12,
+    backgroundColor: "#ccc",
+    borderRadius: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+});

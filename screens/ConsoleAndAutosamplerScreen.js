@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelection } from "../context/SelectionContext";
+import TableView from "@/components/TableView"; // ✅ 통일된 테이블 컴포넌트
 
 export default function ConsoleAndAutosamplerScreen() {
   const navigation = useNavigation();
@@ -41,24 +49,6 @@ export default function ConsoleAndAutosamplerScreen() {
     fetchData();
   }, [selections]);
 
-  const renderTable = (title, data) => {
-    if (!data) return null;
-
-    return (
-      <View style={styles.tableSection}>
-        <Text style={styles.sectionTitle}>{title}</Text>
-        <View style={styles.table}>
-          {Object.entries(data).map(([key, value]) => (
-            <View key={key} style={styles.row}>
-              <Text style={[styles.cell, styles.key]}>{key}</Text>
-              <Text style={styles.cell}>{value}</Text>
-            </View>
-          ))}
-        </View>
-      </View>
-    );
-  };
-
   if (loading) {
     return (
       <View style={styles.centered}>
@@ -71,9 +61,21 @@ export default function ConsoleAndAutosamplerScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Console 및 Autosampler 정보</Text>
       <ScrollView>
-        {renderTable("Console 정보", consoleData)}
-        {renderTable("Autosampler 정보", autosamplerData)}
+        {consoleData && (
+          <View style={styles.tableSection}>
+            <Text style={styles.sectionTitle}>Console 정보</Text>
+            <TableView data={consoleData} />
+          </View>
+        )}
+
+        {autosamplerData && (
+          <View style={styles.tableSection}>
+            <Text style={styles.sectionTitle}>Autosampler 정보</Text>
+            <TableView data={autosamplerData} />
+          </View>
+        )}
       </ScrollView>
+
       <View style={styles.buttonGroup}>
         <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
           <Text>이전</Text>
@@ -114,25 +116,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
-  table: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 6,
-  },
-  row: {
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderColor: "#eee",
-  },
-  cell: {
-    flex: 1,
-    padding: 10,
-    fontSize: 14,
-  },
-  key: {
-    fontWeight: "bold",
-    backgroundColor: "#f2f2f2",
-  },
   buttonGroup: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -140,7 +123,12 @@ const styles = StyleSheet.create({
   },
   button: {
     padding: 12,
-    backgroundColor: "#eee",
+    backgroundColor: "#ccc",
     borderRadius: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 2,
   },
 });

@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelection } from "../context/SelectionContext";
+import TableView from "@/components/TableView"; // ✅ 통일된 테이블 컴포넌트
 
 export default function CPPDetailScreen() {
   const navigation = useNavigation();
@@ -46,19 +47,6 @@ export default function CPPDetailScreen() {
     }
   }, [cppAccArray]);
 
-  const renderTable = (data, index) => {
-    return (
-      <View key={index} style={styles.table}>
-        {Object.entries(data).map(([key, value]) => (
-          <View key={key} style={styles.row}>
-            <Text style={styles.cellHeader}>{key}</Text>
-            <Text style={styles.cell}>{value}</Text>
-          </View>
-        ))}
-      </View>
-    );
-  };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>CPP 정보</Text>
@@ -70,7 +58,12 @@ export default function CPPDetailScreen() {
         <Text style={styles.error}>{error}</Text>
       ) : (
         <ScrollView>
-          {cppAccDataList.map((data, idx) => renderTable(data, idx))}
+          {cppAccDataList.map((data, idx) => (
+            <View key={idx} style={styles.tableSection}>
+              <Text style={styles.sectionTitle}>CPPAcc 정보 {idx + 1}</Text>
+              <TableView data={data} />
+            </View>
+          ))}
         </ScrollView>
       )}
 
@@ -101,26 +94,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 16,
   },
-  table: {
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 6,
-  },
-  row: {
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderColor: "#ddd",
-  },
-  cellHeader: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: "#eee",
+  sectionTitle: {
+    fontSize: 16,
     fontWeight: "bold",
+    marginBottom: 6,
   },
-  cell: {
-    flex: 1,
-    padding: 10,
+  tableSection: {
+    marginBottom: 24,
   },
   error: {
     color: "red",
@@ -133,7 +113,12 @@ const styles = StyleSheet.create({
   },
   navButton: {
     padding: 12,
-    backgroundColor: "#eee",
+    backgroundColor: "#ccc",
     borderRadius: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 2,
   },
 });

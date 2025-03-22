@@ -1,13 +1,19 @@
-import React, { useContext } from "react";
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelection } from "../context/SelectionContext";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SummaryScreen() {
+  <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      {/* 기존 View는 여기 안에 들어가면 돼 */}
+      <View style={styles.container}>
+        <Text style={styles.title}>Site Plan</Text>
+        {/* 나머지 내용 */}
+      </View>
+    </SafeAreaView>
   const navigation = useNavigation();
-  const { selections } = useSelection(); 
-
+  const { selections } = useSelection();
 
   const categories = [
     "Magnet", "Console", "Autosampler", "Accessories", "Utilities",
@@ -20,31 +26,31 @@ export default function SummaryScreen() {
   };
 
   return (
+    
     <View style={styles.container}>
       <Text style={styles.title}>Summary</Text>
-      <ScrollView style={styles.tableContainer}>
-        <View style={styles.tableHeader}>
+
+      <View style={styles.table}>
+        <View style={styles.row}>
           <Text style={[styles.cell, styles.headerCell]}>항목</Text>
           <Text style={[styles.cell, styles.headerCell]}>선택 내용</Text>
         </View>
-        {categories.map((key) => (
-          <View key={key} style={styles.tableRow}>
-            <Text style={styles.cell}>{key}</Text>
-            <Text style={styles.cell}>{renderValue(selections[key])}</Text>
-          </View>
-        ))}
-      </ScrollView>
+
+        <ScrollView style={{ flexGrow: 0 }}>
+          {categories.map((key) => (
+            <View key={key} style={styles.row}>
+              <Text style={[styles.cell, styles.keyCell]}>{key}</Text>
+              <Text style={styles.cell}>{renderValue(selections[key])}</Text>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+
       <View style={styles.footerButtons}>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
           <Text>이전</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => navigation.navigate("ItemDetailScreen")}
-        >
+        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("ItemDetailScreen")}>
           <Text>다음</Text>
         </TouchableOpacity>
       </View>
@@ -56,6 +62,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 22,
@@ -63,39 +70,46 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: "center",
   },
-  tableContainer: {
+  table: {
+    flex: 1,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 6,
-    maxHeight: 350,
+    overflow: "hidden",
   },
-  tableHeader: {
-    flexDirection: "row",
-    backgroundColor: "#0A5D7C",
-  },
-  tableRow: {
+  row: {
     flexDirection: "row",
     borderBottomWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#eee",
   },
   cell: {
     flex: 1,
     padding: 10,
     fontSize: 14,
   },
+  keyCell: {
+    fontWeight: "bold",
+    backgroundColor: "#f0f0f0",
+  },
   headerCell: {
     fontWeight: "bold",
-    color: "white",
+    backgroundColor: "#0A5D7C",
+    color: "#fff",
     textAlign: "center",
   },
   footerButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 24,
+    marginTop: 20,
   },
   navButton: {
     padding: 12,
-    backgroundColor: "#eee",
+    backgroundColor: "#ccc",
     borderRadius: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 2,
   },
 });

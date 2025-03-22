@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelection } from "../context/SelectionContext";
+import TableView from "@/components/TableView"; // ✅ 테이블 컴포넌트 재사용
 
 export default function CRPDetailScreen() {
   const navigation = useNavigation();
@@ -23,22 +24,19 @@ export default function CRPDetailScreen() {
       try {
         const auth = "Basic " + btoa("BBIOK:Bruker_2025");
 
-        // CRPAcc 데이터를 순차적으로 요청
+        // CRPAcc 다건 요청
         const crpPromises = selections.CRPAcc.map((acc) =>
           fetch(
             `https://brkr-server.onrender.com/excel/CRPAcc/${encodeURIComponent(acc)}`,
             { headers: { Authorization: auth } }
           ).then((res) => res.json())
         );
-
         const crpResults = await Promise.all(crpPromises);
         setCrpDataList(crpResults);
 
-        // HeTransferline은 단일 값만 요청
+        // HeTransferline 단일 요청
         const heTransRes = await fetch(
-          `https://brkr-server.onrender.com/excel/HeTransferline/${encodeURIComponent(
-            selections.HeTrans
-          )}`,
+          `https://brkr-server.onrender.com/excel/HeTransferline/${encodeURIComponent(selections.HeTrans)}`,
           { headers: { Authorization: auth } }
         );
         const heTransJson = await heTransRes.json();
@@ -52,20 +50,6 @@ export default function CRPDetailScreen() {
 
     fetchData();
   }, []);
-
-  const renderTable = (data, title) => (
-    <View style={styles.section}>
-      <Text style={styles.subtitle}>{title}</Text>
-      <View style={styles.table}>
-        {Object.entries(data).map(([key, value]) => (
-          <View style={styles.row} key={key}>
-            <Text style={[styles.cell, styles.keyCell]}>{key}</Text>
-            <Text style={styles.cell}>{value}</Text>
-          </View>
-        ))}
-      </View>
-    </View>
-  );
 
   if (loading) {
     return (
@@ -83,23 +67,26 @@ export default function CRPDetailScreen() {
 
       {crpDataList.map((data, index) =>
         data.error ? (
-          <Text style={styles.error} key={`error-${index}`}>{data.error}</Text>
+          <Text style={styles.error} key={`error-${index}`}>
+            {data.error}
+          </Text>
         ) : (
-          <View key={`crp-${index}`}>
-            {renderTable(data, `CRP Acc 정보 ${index + 1}`)}
+          <View key={`crp-${index}`} style={styles.tableSection}>
+            <Text style={styles.sectionTitle}>CRP Acc 정보 {index + 1}</Text>
+            <TableView data={data} />
           </View>
         )
       )}
 
-
-      {heTransData && !heTransData.error &&
-        renderTable(heTransData, "He Transferline 정보")}
+      {heTransData && !heTransData.error && (
+        <View style={styles.tableSection}>
+          <Text style={styles.sectionTitle}>He Transferline 정보</Text>
+          <TableView data={heTransData} />
+        </View>
+      )}
 
       <View style={styles.footerButtons}>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
           <Text>이전</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -129,30 +116,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 16,
   },
-  subtitle: {
-    fontWeight: "bold",
+  sectionTitle: {
     fontSize: 16,
-    marginTop: 20,
+    fontWeight: "bold",
     marginBottom: 6,
   },
-  table: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 6,
-    marginBottom: 16,
-  },
-  row: {
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderColor: "#eee",
-  },
-  cell: {
-    flex: 1,
-    padding: 10,
-  },
-  keyCell: {
-    backgroundColor: "#f0f0f0",
-    fontWeight: "bold",
+  tableSection: {
+    marginBottom: 24,
   },
   error: {
     color: "red",
@@ -165,7 +135,12 @@ const styles = StyleSheet.create({
   },
   navButton: {
     padding: 12,
-    backgroundColor: "#eee",
+    backgroundColor: "#ccc",
     borderRadius: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 2,
   },
 });

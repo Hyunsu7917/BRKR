@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useSelection } from "../context/SelectionContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const sitePlanOptions = {
   Probe: ["iProbe", "RTProbe", "CP-MAS", "HR-MAS", "TXI", "없음"],
@@ -26,6 +27,13 @@ const sitePlanOptions = {
 };
 
 export default function SitePlan2Screen({ navigation }) {
+  <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      {/* 기존 View는 여기 안에 들어가면 돼 */}
+      <View style={styles.container}>
+        <Text style={styles.title}>Site Plan</Text>
+        {/* 나머지 내용 */}
+      </View>
+    </SafeAreaView>
   const { selections, setSelections } = useSelection();
 
   const handleSingleSelect = (category, value) => {
@@ -195,7 +203,12 @@ const styles = StyleSheet.create({
   },
   navButton: {
     padding: 12,
-    backgroundColor: "#eee",
+    backgroundColor: "#ccc",
     borderRadius: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 2,
   },
 });
