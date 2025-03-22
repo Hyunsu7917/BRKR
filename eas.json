@@ -4,6 +4,9 @@
     "appVersionSource": "remote"
   },
   "build": {
+    "android": {
+      "node": "18.18.0"
+    },
     "development": {
       "developmentClient": true,
       "distribution": "internal"
@@ -20,5 +23,7 @@
   },
   "submit": {
     "production": {}
-  }
+  },
+  
+  
 }
