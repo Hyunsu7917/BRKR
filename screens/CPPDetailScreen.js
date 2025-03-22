@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelection } from "../context/SelectionContext";
-import TableView from "@/components/TableView"; // ✅ 통일된 테이블 컴포넌트
+import TableView from "@/components/TableView";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CPPDetailScreen() {
   const navigation = useNavigation();
@@ -48,37 +49,39 @@ export default function CPPDetailScreen() {
   }, [cppAccArray]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>CPP 정보</Text>
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : cppAccArray.length === 0 ? (
-        <Text>CPP Acc 선택 항목이 없습니다.</Text>
-      ) : error ? (
-        <Text style={styles.error}>{error}</Text>
-      ) : (
-        <ScrollView>
-          {cppAccDataList.map((data, idx) => (
-            <View key={idx} style={styles.tableSection}>
-              <Text style={styles.sectionTitle}>CPPAcc 정보 {idx + 1}</Text>
-              <TableView data={data} />
-            </View>
-          ))}
-        </ScrollView>
-      )}
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f6f6f6" }}>
+      <View style={styles.container}>
+        <Text style={styles.title}>CPP 정보</Text>
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : cppAccArray.length === 0 ? (
+          <Text>CPP Acc 선택 항목이 없습니다.</Text>
+        ) : error ? (
+          <Text style={styles.error}>{error}</Text>
+        ) : (
+          <ScrollView>
+            {cppAccDataList.map((data, idx) => (
+              <View key={idx} style={styles.tableSection}>
+                <Text style={styles.sectionTitle}>CPPAcc 정보 {idx + 1}</Text>
+                <TableView data={data} />
+              </View>
+            ))}
+          </ScrollView>
+        )}
 
-      <View style={styles.footerButtons}>
-        <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
-          <Text>이전</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => navigation.navigate("CRPDetailScreen")}
-        >
-          <Text>다음</Text>
-        </TouchableOpacity>
+        <View style={styles.footerButtons}>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
+            <Text>이전</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => navigation.navigate("CRPDetailScreen")}
+          >
+            <Text>다음</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -86,7 +89,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f6f6f6",
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 22,

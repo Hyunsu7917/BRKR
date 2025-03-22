@@ -20,13 +20,6 @@ const sitePlanOptions = {
 };
 
 export default function SitePlanScreen() {
-  <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      {/* 기존 View는 여기 안에 들어가면 돼 */}
-      <View style={styles.container}>
-        <Text style={styles.title}>Site Plan</Text>
-        {/* 나머지 내용 */}
-      </View>
-    </SafeAreaView>
   const navigation = useNavigation();
   const { selections, setSelections } = useSelection();
 
@@ -41,7 +34,7 @@ export default function SitePlanScreen() {
   // 멀티 선택 (Button 토글용)
   const handleMultiToggle = (category, value) => {
     setSelections((prev) => {
-      const current = prev[category] || []; // 예외 방지
+      const current = prev[category] || [];
       const updated = current.includes(value)
         ? current.filter((item) => item !== value)
         : [...current, value];
@@ -50,51 +43,55 @@ export default function SitePlanScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      {Object.keys(sitePlanOptions).map((category) => (
-        <View key={category} style={styles.categoryContainer}>
-          <Text style={styles.categoryTitle}>{category}</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <Text style={styles.title}>Site Plan</Text>
 
-          {category === "Accessories" || category === "Utilities" ? (
-            <View style={styles.buttonGroup}>
-              {sitePlanOptions[category].map((option) => (
-                <TouchableOpacity
-                  key={option}
-                  style={[
-                    styles.optionButton,
-                    (selections[category] || []).includes(option) && styles.selectedButton,
-                  ]}
-                  onPress={() => handleMultiToggle(category, option)}
-                >
-                  <Text style={styles.optionText}>{option}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          ) : (
-            <View style={styles.pickerWrapper}>
-              <Picker
-                selectedValue={selections[category] || ""}
-                onValueChange={(value) => handleSingleSelect(category, value)}
-              >
-                <Picker.Item label="선택" value="" />
+        {Object.keys(sitePlanOptions).map((category) => (
+          <View key={category} style={styles.categoryContainer}>
+            <Text style={styles.categoryTitle}>{category}</Text>
+
+            {category === "Accessories" || category === "Utilities" ? (
+              <View style={styles.buttonGroup}>
                 {sitePlanOptions[category].map((option) => (
-                  <Picker.Item key={option} label={option} value={option} />
+                  <TouchableOpacity
+                    key={option}
+                    style={[
+                      styles.optionButton,
+                      (selections[category] || []).includes(option) && styles.selectedButton,
+                    ]}
+                    onPress={() => handleMultiToggle(category, option)}
+                  >
+                    <Text style={styles.optionText}>{option}</Text>
+                  </TouchableOpacity>
                 ))}
-              </Picker>
-            </View>
-          )}
-        </View>
-      ))}
+              </View>
+            ) : (
+              <View style={styles.pickerWrapper}>
+                <Picker
+                  selectedValue={selections[category] || ""}
+                  onValueChange={(value) => handleSingleSelect(category, value)}
+                >
+                  <Picker.Item label="선택" value="" />
+                  {sitePlanOptions[category].map((option) => (
+                    <Picker.Item key={option} label={option} value={option} />
+                  ))}
+                </Picker>
+              </View>
+            )}
+          </View>
+        ))}
 
-      <View style={styles.footerButtons}>
-        <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
-          <Text>이전</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("SitePlan2Screen")}>
-          <Text>다음</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        <View style={styles.footerButtons}>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
+            <Text>이전</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("SitePlan2Screen")}>
+            <Text>다음</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -102,6 +99,12 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     paddingBottom: 40,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
   },
   categoryContainer: {
     marginBottom: 24,

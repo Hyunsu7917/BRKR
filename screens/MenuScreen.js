@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
+
 const MenuScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
@@ -17,6 +18,10 @@ const MenuScreen = ({ navigation }) => {
       <TouchableOpacity style={styles.button} onPress={() => console.log("고객 정보 조회 (준비 중)")}>
         <Text style={styles.buttonText}>고객 정보 조회</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("HomeScreen")}>
+        <Text style={styles.buttonText}>돌아가기</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -24,6 +29,8 @@ const MenuScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20,
+    backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
   },

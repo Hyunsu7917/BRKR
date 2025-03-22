@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { useSelection } from "../context/SelectionContext";
-import TableView from "@/components/TableView"; // 📦 재사용 컴포넌트
+import TableView from "@/components/TableView";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const API_BASE = "https://brkr-server.onrender.com/excel";
 
@@ -11,7 +12,7 @@ export default function ItemDetailScreen() {
   const navigation = useNavigation();
   const { selections } = useSelection();
 
-  const [sheet, setSheet] = useState("Magnet"); // 첫 화면은 Magnet
+  const [sheet, setSheet] = useState("Magnet");
   const [value, setValue] = useState(selections.Magnet);
   const [data, setData] = useState({});
 
@@ -36,32 +37,35 @@ export default function ItemDetailScreen() {
   }, [sheet, value]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>항목별 정보 ({sheet})</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <View style={styles.container}>
+        <Text style={styles.title}>항목별 정보 ({sheet})</Text>
 
-      <ScrollView style={{ marginBottom: 16 }}>
-        <TableView data={data} />
-      </ScrollView>
+        <ScrollView style={{ marginBottom: 16 }}>
+          <TableView data={data} />
+        </ScrollView>
 
-      <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
-          <Text>이전</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("ConsoleAndAutosamplerScreen")}
-        >
-          <Text>다음</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonRow}>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+            <Text>이전</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("ConsoleAndAutosamplerScreen")}
+          >
+            <Text>다음</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 20,
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 20,

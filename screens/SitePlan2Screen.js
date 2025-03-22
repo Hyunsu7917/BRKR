@@ -1,7 +1,14 @@
 import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useSelection } from "../context/SelectionContext";
+import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const sitePlanOptions = {
@@ -22,18 +29,12 @@ const sitePlanOptions = {
     "10 m indoor line / 30 m outdoor line",
     "20 m indoor line / 10 m outdoor line",
     "20 m indoor line / 20 m outdoor line",
-    "30 m indoor line / 10 m outdoor line",    
+    "30 m indoor line / 10 m outdoor line",
   ],
 };
 
-export default function SitePlan2Screen({ navigation }) {
-  <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      {/* 기존 View는 여기 안에 들어가면 돼 */}
-      <View style={styles.container}>
-        <Text style={styles.title}>Site Plan</Text>
-        {/* 나머지 내용 */}
-      </View>
-    </SafeAreaView>
+export default function SitePlan2Screen() {
+  const navigation = useNavigation();
   const { selections, setSelections } = useSelection();
 
   const handleSingleSelect = (category, value) => {
@@ -51,125 +52,128 @@ export default function SitePlan2Screen({ navigation }) {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Site Plan 2</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.title}>Site Plan 2</Text>
 
-      {/* Probe (Multi-select) */}
-      <Text style={styles.label}>Probe</Text>
-      <View style={styles.buttonGroup}>
-        {sitePlanOptions.Probe.map((option) => (
-          <TouchableOpacity
-            key={option}
-            style={[
-              styles.optionButton,
-              selections.Probe?.includes(option) && styles.selectedButton
-            ]}
-            onPress={() => handleMultiToggle("Probe", option)}
-          >
-            <Text>{option}</Text>
+        {/* Probe (Multi-select) */}
+        <Text style={styles.label}>Probe</Text>
+        <View style={styles.buttonGroup}>
+          {sitePlanOptions.Probe.map((option) => (
+            <TouchableOpacity
+              key={option}
+              style={[
+                styles.optionButton,
+                selections.Probe?.includes(option) && styles.selectedButton,
+              ]}
+              onPress={() => handleMultiToggle("Probe", option)}
+            >
+              <Text>{option}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* CPP */}
+        <Text style={styles.label}>CPP</Text>
+        <Picker
+          selectedValue={selections.CPP}
+          onValueChange={(value) => handleSingleSelect("CPP", value)}
+          style={styles.picker}
+        >
+          {sitePlanOptions.CPP.map((option) => (
+            <Picker.Item key={option} label={option} value={option} />
+          ))}
+        </Picker>
+
+        {/* CPP Acc */}
+        {selections.CPP !== "없음" && (
+          <>
+            <Text style={styles.label}>CPP Acc</Text>
+            <View style={styles.buttonGroup}>
+              {sitePlanOptions.CPPAcc.map((option) => (
+                <TouchableOpacity
+                  key={option}
+                  style={[
+                    styles.optionButton,
+                    selections.CPPAcc?.includes(option) && styles.selectedButton,
+                  ]}
+                  onPress={() => handleMultiToggle("CPPAcc", option)}
+                >
+                  <Text>{option}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </>
+        )}
+
+        {/* CRP */}
+        <Text style={styles.label}>CRP</Text>
+        <Picker
+          selectedValue={selections.CRP}
+          onValueChange={(value) => handleSingleSelect("CRP", value)}
+          style={styles.picker}
+        >
+          {sitePlanOptions.CRP.map((option) => (
+            <Picker.Item key={option} label={option} value={option} />
+          ))}
+        </Picker>
+
+        {/* CRP Acc + He Transfer */}
+        {selections.CRP !== "없음" && (
+          <>
+            <Text style={styles.label}>CRP Acc</Text>
+            <View style={styles.buttonGroup}>
+              {sitePlanOptions.CRPAcc.map((option) => (
+                <TouchableOpacity
+                  key={option}
+                  style={[
+                    styles.optionButton,
+                    selections.CRPAcc?.includes(option) && styles.selectedButton,
+                  ]}
+                  onPress={() => handleMultiToggle("CRPAcc", option)}
+                >
+                  <Text>{option}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <Text style={styles.label}>He Transfer Line</Text>
+            <Picker
+              selectedValue={selections.HeTransferline}
+              onValueChange={(value) => handleSingleSelect("HeTransferline", value)}
+              style={styles.picker}
+            >
+              <Picker.Item label="없음" value="없음" />
+              {sitePlanOptions.HeTransferline.map((option) => (
+                <Picker.Item key={option} label={option} value={option} />
+              ))}
+            </Picker>
+          </>
+        )}
+
+        <View style={styles.footerButtons}>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
+            <Text>이전</Text>
           </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* CPP */}
-      <Text style={styles.label}>CPP</Text>
-      <Picker
-        selectedValue={selections.CPP}
-        onValueChange={(value) => handleSingleSelect("CPP", value)}
-        style={styles.picker}
-      >
-        {sitePlanOptions.CPP.map((option) => (
-          <Picker.Item key={option} label={option} value={option} />
-        ))}
-      </Picker>
-
-      {/* CPP Acc (Multi-select, Conditional) */}
-      {selections.CPP !== "없음" && (
-        <>
-          <Text style={styles.label}>CPP Acc</Text>
-          <View style={styles.buttonGroup}>
-            {sitePlanOptions.CPPAcc.map((option) => (
-              <TouchableOpacity
-                key={option}
-                style={[
-                  styles.optionButton,
-                  selections.CPPAcc?.includes(option) && styles.selectedButton
-                ]}
-                onPress={() => handleMultiToggle("CPPAcc", option)}
-              >
-                <Text>{option}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </>
-      )}
-
-      {/* CRP */}
-      <Text style={styles.label}>CRP</Text>
-      <Picker
-        selectedValue={selections.CRP}
-        onValueChange={(value) => handleSingleSelect("CRP", value)}
-        style={styles.picker}
-      >
-        {sitePlanOptions.CRP.map((option) => (
-          <Picker.Item key={option} label={option} value={option} />
-        ))}
-      </Picker>
-
-      {/* CRP Acc + He Transfer (Conditional) */}
-      {selections.CRP !== "없음" && (
-        <>
-          <Text style={styles.label}>CRP Acc</Text>
-          <View style={styles.buttonGroup}>
-            {sitePlanOptions.CRPAcc.map((option) => (
-              <TouchableOpacity
-                key={option}
-                style={[
-                  styles.optionButton,
-                  selections.CRPAcc?.includes(option) && styles.selectedButton
-                ]}
-                onPress={() => handleMultiToggle("CRPAcc", option)}
-              >
-                <Text>{option}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <Text style={styles.label}>He Transfer Line</Text>
-          <Picker
-            selectedValue={selections.HeTransferline}
-            onValueChange={(value) => handleSingleSelect("HeTransferline", value)}
-            style={styles.picker}
-          >
-            <Picker.Item label="없음" value="없음" />
-            {sitePlanOptions.HeTransferline.map((option) => (
-              <Picker.Item key={option} label={option} value={option} />
-            ))}
-          </Picker>
-        </>
-      )}
-
-      {/* Navigation Buttons */}
-      <View style={styles.footerButtons}>
-        <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
-          <Text>이전</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("SummaryScreen")}>
-          <Text>다음</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("SummaryScreen")}>
+            <Text>다음</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 20,
+    textAlign: "center",
   },
   label: {
     fontWeight: "bold",

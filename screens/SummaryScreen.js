@@ -5,13 +5,6 @@ import { useSelection } from "../context/SelectionContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SummaryScreen() {
-  <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      {/* 기존 View는 여기 안에 들어가면 돼 */}
-      <View style={styles.container}>
-        <Text style={styles.title}>Site Plan</Text>
-        {/* 나머지 내용 */}
-      </View>
-    </SafeAreaView>
   const navigation = useNavigation();
   const { selections } = useSelection();
 
@@ -26,35 +19,36 @@ export default function SummaryScreen() {
   };
 
   return (
-    
-    <View style={styles.container}>
-      <Text style={styles.title}>Summary</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Summary</Text>
 
-      <View style={styles.table}>
-        <View style={styles.row}>
-          <Text style={[styles.cell, styles.headerCell]}>항목</Text>
-          <Text style={[styles.cell, styles.headerCell]}>선택 내용</Text>
+        <View style={styles.table}>
+          <View style={styles.row}>
+            <Text style={[styles.cell, styles.headerCell]}>항목</Text>
+            <Text style={[styles.cell, styles.headerCell]}>선택 내용</Text>
+          </View>
+
+          <ScrollView style={{ flexGrow: 0 }}>
+            {categories.map((key) => (
+              <View key={key} style={styles.row}>
+                <Text style={[styles.cell, styles.keyCell]}>{key}</Text>
+                <Text style={styles.cell}>{renderValue(selections[key])}</Text>
+              </View>
+            ))}
+          </ScrollView>
         </View>
 
-        <ScrollView style={{ flexGrow: 0 }}>
-          {categories.map((key) => (
-            <View key={key} style={styles.row}>
-              <Text style={[styles.cell, styles.keyCell]}>{key}</Text>
-              <Text style={styles.cell}>{renderValue(selections[key])}</Text>
-            </View>
-          ))}
-        </ScrollView>
+        <View style={styles.footerButtons}>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
+            <Text>이전</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("ItemDetailScreen")}>
+            <Text>다음</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-
-      <View style={styles.footerButtons}>
-        <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
-          <Text>이전</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("ItemDetailScreen")}>
-          <Text>다음</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

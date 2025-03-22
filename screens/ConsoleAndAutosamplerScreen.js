@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelection } from "../context/SelectionContext";
-import TableView from "@/components/TableView"; // ✅ 통일된 테이블 컴포넌트
+import TableView from "@/components/TableView";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ConsoleAndAutosamplerScreen() {
   const navigation = useNavigation();
@@ -58,36 +59,38 @@ export default function ConsoleAndAutosamplerScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Console 및 Autosampler 정보</Text>
-      <ScrollView>
-        {consoleData && (
-          <View style={styles.tableSection}>
-            <Text style={styles.sectionTitle}>Console 정보</Text>
-            <TableView data={consoleData} />
-          </View>
-        )}
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Console 및 Autosampler 정보</Text>
+        <ScrollView>
+          {consoleData && (
+            <View style={styles.tableSection}>
+              <Text style={styles.sectionTitle}>Console 정보</Text>
+              <TableView data={consoleData} />
+            </View>
+          )}
 
-        {autosamplerData && (
-          <View style={styles.tableSection}>
-            <Text style={styles.sectionTitle}>Autosampler 정보</Text>
-            <TableView data={autosamplerData} />
-          </View>
-        )}
-      </ScrollView>
+          {autosamplerData && (
+            <View style={styles.tableSection}>
+              <Text style={styles.sectionTitle}>Autosampler 정보</Text>
+              <TableView data={autosamplerData} />
+            </View>
+          )}
+        </ScrollView>
 
-      <View style={styles.buttonGroup}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
-          <Text>이전</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("CPPDetailScreen")}
-        >
-          <Text>다음</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonGroup}>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+            <Text>이전</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("CPPDetailScreen")}
+          >
+            <Text>다음</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

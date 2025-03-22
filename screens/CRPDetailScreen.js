@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelection } from "../context/SelectionContext";
-import TableView from "@/components/TableView"; // ✅ 테이블 컴포넌트 재사용
+import TableView from "@/components/TableView";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CRPDetailScreen() {
   const navigation = useNavigation();
@@ -23,8 +24,8 @@ export default function CRPDetailScreen() {
     const fetchData = async () => {
       try {
         const auth = "Basic " + btoa("BBIOK:Bruker_2025");
-
-        // CRPAcc 다건 요청
+  
+        // CRPAcc 여러 항목 요청
         const crpPromises = selections.CRPAcc.map((acc) =>
           fetch(
             `https://brkr-server.onrender.com/excel/CRPAcc/${encodeURIComponent(acc)}`,
@@ -33,21 +34,24 @@ export default function CRPDetailScreen() {
         );
         const crpResults = await Promise.all(crpPromises);
         setCrpDataList(crpResults);
-
-        // HeTransferline 단일 요청
-        const heTransRes = await fetch(
-          `https://brkr-server.onrender.com/excel/HeTransferline/${encodeURIComponent(selections.HeTrans)}`,
-          { headers: { Authorization: auth } }
-        );
-        const heTransJson = await heTransRes.json();
-        setHeTransData(heTransJson);
+  
+        // ✅ HeTransferline 선택값이 존재할 때만 요청
+        if (selections.HeTransferline && selections.HeTransferline !== "없음") {
+          const heTransRes = await fetch(
+            `https://brkr-server.onrender.com/excel/HeTransferline/${encodeURIComponent(selections.HeTransferline)}`,
+            { headers: { Authorization: auth } }
+          );
+          const heTransJson = await heTransRes.json();
+          setHeTransData(heTransJson);
+        }
+  
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, []);
 
@@ -60,50 +64,55 @@ export default function CRPDetailScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>CRP 정보</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <View style={styles.container}>
+        <Text style={styles.title}>CRP 정보</Text>
 
-      {error && <Text style={styles.error}>Error: {error}</Text>}
+        {error && <Text style={styles.error}>Error: {error}</Text>}
 
-      {crpDataList.map((data, index) =>
-        data.error ? (
-          <Text style={styles.error} key={`error-${index}`}>
-            {data.error}
-          </Text>
-        ) : (
-          <View key={`crp-${index}`} style={styles.tableSection}>
-            <Text style={styles.sectionTitle}>CRP Acc 정보 {index + 1}</Text>
-            <TableView data={data} />
-          </View>
-        )
-      )}
+        <ScrollView>
+          {crpDataList.map((data, index) =>
+            data.error ? (
+              <Text style={styles.error} key={`error-${index}`}>
+                {data.error}
+              </Text>
+            ) : (
+              <View key={`crp-${index}`} style={styles.tableSection}>
+                <Text style={styles.sectionTitle}>CRP Acc 정보 {index + 1}</Text>
+                <TableView data={data} />
+              </View>
+            )
+          )}
 
-      {heTransData && !heTransData.error && (
-        <View style={styles.tableSection}>
-          <Text style={styles.sectionTitle}>He Transferline 정보</Text>
-          <TableView data={heTransData} />
+          {heTransData && !heTransData.error && (
+            <View style={styles.tableSection}>
+              <Text style={styles.sectionTitle}>He Transferline 정보</Text>
+              <TableView data={heTransData} />
+            </View>
+          )}
+        </ScrollView>
+
+        <View style={styles.footerButtons}>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
+            <Text>이전</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => navigation.navigate("HomeScreen")}
+          >
+            <Text>Home</Text>
+          </TouchableOpacity>
         </View>
-      )}
-
-      <View style={styles.footerButtons}>
-        <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
-          <Text>이전</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => navigation.navigate("HomeScreen")}
-        >
-          <Text>Home</Text>
-        </TouchableOpacity>
       </View>
-    </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 20,
-    paddingBottom: 40,
+    backgroundColor: "#fff",
   },
   centered: {
     flex: 1,
@@ -111,7 +120,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 16,
@@ -127,6 +136,7 @@ const styles = StyleSheet.create({
   error: {
     color: "red",
     marginBottom: 10,
+    textAlign: "center",
   },
   footerButtons: {
     flexDirection: "row",
