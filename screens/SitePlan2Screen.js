@@ -25,21 +25,14 @@ const sitePlanOptions = {
 };
 
 export default function SitePlan2Screen({ navigation }) {
-  const [selectedOptions, setSelectedOptions] = useState({
-    Probe: [],
-    CPP: "없음",
-    CPPAcc: [],
-    CRP: "없음",
-    CRPAcc: [],
-    HeTrans: "없음",
-  });
+  const { selections, setSelections } = useSelection();
 
   const handleSingleSelect = (category, value) => {
-    setSelectedOptions((prev) => ({ ...prev, [category]: value }));
+    setSelections((prev) => ({ ...prev, [category]: value }));
   };
 
   const handleMultiToggle = (category, value) => {
-    setSelectedOptions((prev) => {
+    setSelections((prev) => {
       const updated = prev[category].includes(value)
         ? prev[category].filter((item) => item !== value)
         : [...prev[category], value];
@@ -57,7 +50,7 @@ export default function SitePlan2Screen({ navigation }) {
         {sitePlanOptions.Probe.map((option) => (
           <TouchableOpacity
             key={option}
-            style={[styles.optionButton, selectedOptions.Probe.includes(option) && styles.selectedButton]}
+            style={[styles.optionButton, selections.Probe.includes(option) && styles.selectedButton]}
             onPress={() => handleMultiToggle("Probe", option)}
           >
             <Text>{option}</Text>
@@ -68,7 +61,7 @@ export default function SitePlan2Screen({ navigation }) {
       {/* CPP */}
       <Text style={styles.label}>CPP</Text>
       <Picker
-        selectedValue={selectedOptions.CPP}
+        selectedValue={selections.CPP}
         onValueChange={(value) => handleSingleSelect("CPP", value)}
         style={styles.picker}
       >
@@ -78,14 +71,14 @@ export default function SitePlan2Screen({ navigation }) {
       </Picker>
 
       {/* CPP Acc (multi, conditional) */}
-      {selectedOptions.CPP !== "없음" && (
+      {selections.CPP !== "없음" && (
         <>
           <Text style={styles.label}>CPP Acc</Text>
           <View style={styles.buttonGroup}>
             {sitePlanOptions.CPPAcc.map((option) => (
               <TouchableOpacity
                 key={option}
-                style={[styles.optionButton, selectedOptions.CPPAcc.includes(option) && styles.selectedButton]}
+                style={[styles.optionButton, selections.CPPAcc.includes(option) && styles.selectedButton]}
                 onPress={() => handleMultiToggle("CPPAcc", option)}
               >
                 <Text>{option}</Text>
@@ -98,7 +91,7 @@ export default function SitePlan2Screen({ navigation }) {
       {/* CRP */}
       <Text style={styles.label}>CRP</Text>
       <Picker
-        selectedValue={selectedOptions.CRP}
+        selectedValue={selections.CRP}
         onValueChange={(value) => handleSingleSelect("CRP", value)}
         style={styles.picker}
       >
@@ -108,14 +101,14 @@ export default function SitePlan2Screen({ navigation }) {
       </Picker>
 
       {/* CRP Acc (multi, conditional) */}
-      {selectedOptions.CRP !== "없음" && (
+      {selections.CRP !== "없음" && (
         <>
           <Text style={styles.label}>CRP Acc</Text>
           <View style={styles.buttonGroup}>
             {sitePlanOptions.CRPAcc.map((option) => (
               <TouchableOpacity
                 key={option}
-                style={[styles.optionButton, selectedOptions.CRPAcc.includes(option) && styles.selectedButton]}
+                style={[styles.optionButton, selections.CRPAcc.includes(option) && styles.selectedButton]}
                 onPress={() => handleMultiToggle("CRPAcc", option)}
               >
                 <Text>{option}</Text>
@@ -126,7 +119,7 @@ export default function SitePlan2Screen({ navigation }) {
           {/* He Transfer Line (conditional dropdown) */}
           <Text style={styles.label}>He Transfer Line</Text>
           <Picker
-            selectedValue={selectedOptions.HeTrans}
+            selectedValue={selections.HeTrans}
             onValueChange={(value) => handleSingleSelect("HeTrans", value)}
             style={styles.picker}
           >

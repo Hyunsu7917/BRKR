@@ -14,20 +14,14 @@ const sitePlanOptions = {
 
 export default function SitePlanScreen() {
   const navigation = useNavigation(); // ✅ navigation 객체 가져오기
-  const [selectedOptions, setSelectedOptions] = useState({
-    Magnet: "",
-    Console: "",
-    Autosampler: "",
-    Accessories: [],
-    Utilities: [],
-  });
+  const { selections, setSelections } = useSelection();
 
   const handleSingleSelect = (category, value) => {
-    setSelectedOptions((prev) => ({ ...prev, [category]: value }));
+    setSelections((prev) => ({ ...prev, [category]: value }));
   };
 
   const handleMultiToggle = (category, value) => {
-    setSelectedOptions((prev) => {
+    setSelections((prev) => {
       const updated = prev[category].includes(value)
         ? prev[category].filter((item) => item !== value)
         : [...prev[category], value];
@@ -47,7 +41,7 @@ export default function SitePlanScreen() {
                   key={option}
                   style={[
                     styles.optionButton,
-                    selectedOptions[category].includes(option) && styles.selectedButton,
+                    selections[category].includes(option) && styles.selectedButton,
                   ]}
                   onPress={() => handleMultiToggle(category, option)}
                 >
@@ -58,7 +52,7 @@ export default function SitePlanScreen() {
           ) : (
             <View style={styles.pickerWrapper}>
               <Picker
-                selectedValue={selectedOptions[category]}
+                selectedValue={selections[category]}
                 onValueChange={(value) => handleSingleSelect(category, value)}
               >
                 <Picker.Item label="선택" value="" />
