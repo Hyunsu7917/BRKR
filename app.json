@@ -11,9 +11,9 @@
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff",
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    }
+      "updates": {
+        "fallbackToCacheTimeout": 0
+      }
     },
     "ios": {
       "supportsTablet": true
@@ -27,6 +27,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6a215b91-eeea-4f6f-81e3-4f39e16d39ca"
+      }
     }
   }
 }
