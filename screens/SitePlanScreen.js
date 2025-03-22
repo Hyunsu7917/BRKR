@@ -1,10 +1,14 @@
-// ✅ 수정된 SitePlanScreen.js
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import React from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
 import { useSelection } from "../context/SelectionContext";
-
 
 const sitePlanOptions = {
   Magnet: ["400core", "400evo", "500evo", "600evo", "700evo"],
@@ -15,18 +19,24 @@ const sitePlanOptions = {
 };
 
 export default function SitePlanScreen() {
-  const navigation = useNavigation(); // ✅ navigation 객체 가져오기
+  const navigation = useNavigation();
   const { selections, setSelections } = useSelection();
 
+  // 단일 선택 (Picker용)
   const handleSingleSelect = (category, value) => {
-    setSelections((prev) => ({ ...prev, [category]: value }));
+    setSelections((prev) => ({
+      ...prev,
+      [category]: value,
+    }));
   };
 
+  // 멀티 선택 (Button 토글용)
   const handleMultiToggle = (category, value) => {
     setSelections((prev) => {
-      const updated = prev[category].includes(value)
-        ? prev[category].filter((item) => item !== value)
-        : [...prev[category], value];
+      const current = prev[category] || []; // 예외 방지
+      const updated = current.includes(value)
+        ? current.filter((item) => item !== value)
+        : [...current, value];
       return { ...prev, [category]: updated };
     });
   };
@@ -36,6 +46,7 @@ export default function SitePlanScreen() {
       {Object.keys(sitePlanOptions).map((category) => (
         <View key={category} style={styles.categoryContainer}>
           <Text style={styles.categoryTitle}>{category}</Text>
+
           {category === "Accessories" || category === "Utilities" ? (
             <View style={styles.buttonGroup}>
               {sitePlanOptions[category].map((option) => (
@@ -43,7 +54,7 @@ export default function SitePlanScreen() {
                   key={option}
                   style={[
                     styles.optionButton,
-                    selections[category]?.includes(option) && styles.selectedButton,
+                    (selections[category] || []).includes(option) && styles.selectedButton,
                   ]}
                   onPress={() => handleMultiToggle(category, option)}
                 >
@@ -54,7 +65,7 @@ export default function SitePlanScreen() {
           ) : (
             <View style={styles.pickerWrapper}>
               <Picker
-                selectedValue={selections[category]}
+                selectedValue={selections[category] || ""}
                 onValueChange={(value) => handleSingleSelect(category, value)}
               >
                 <Picker.Item label="선택" value="" />
