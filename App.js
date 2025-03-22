@@ -4,13 +4,12 @@ import Constants from "expo-constants";
 import { NavigationContainer } from "@react-navigation/native";
 import { SelectionProvider } from "./context/SelectionContext";
 import MainNavigator from "./components/MainNavigator";
-import Constants from "expo-constants";
 
 export default function App() {
   useEffect(() => {
     const checkForUpdate = async () => {
       try {
-        const res = await fetch("https://your-server.com/latest-version.json");
+        const res = await fetch("https://brkr-server.onrender.com/latest-version.json");
         const latest = await res.json();
 
         const currentVersion = Constants.expoConfig?.version; 
