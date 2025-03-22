@@ -34,14 +34,14 @@ export default function SitePlan() {
   };
 
   return (
-    <div className="p-6 flex flex-col gap-4">
+    <View className="p-6 flex flex-col gap-4">
       <Card>
         <CardContent className="p-4 space-y-4">
           {Object.keys(sitePlanOptions).map((category) => (
-            <div key={category} className="flex items-center justify-between">
+            <View key={category} className="flex items-center justify-between">
               <span className="font-semibold">{category}</span>
               {category === "Accessories" || category === "Utilities" ? (
-                <div className="flex gap-2">
+                <View className="flex gap-2">
                   {sitePlanOptions[category].map((option) => (
                     <Button
                       key={option}
@@ -51,7 +51,7 @@ export default function SitePlan() {
                       {option}
                     </Button>
                   ))}
-                </div>
+                </View>
               ) : (
                 <Select onValueChange={(value) => handleSelectChange(category, value)}>
                   <SelectTrigger className="w-40">
@@ -66,15 +66,23 @@ export default function SitePlan() {
                   </SelectContent>
                 </Select>
               )}
-            </div>
+            </View>
           ))}
         </CardContent>
       </Card>
-      <div className="flex justify-between">
-        <Button variant="outline">이전</Button>
-        <Button>다음</Button>
-      </div>
-    </div>
+      <View className="flex justify-between">
+      <View style={styles.footerButtons}>
+        <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
+          <Text>이전</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("SitePlan2Screen")}>
+          <Text>다음</Text>
+        </TouchableOpacity>
+      </View>
+
+      </View>
+    </View>
   );
 }
 
