@@ -8,10 +8,19 @@ const sitePlanOptions = {
   CPPAcc: ["LN2dewar", "Prodigy Unit", "없음"],
   CRP: ["없음", "CRP"],
   CRPAcc: ["CU", "Outdoor", "Indoor", "Water Cooled", "BSNL", "없음"],
-  HeTrans: [
+  HeTransferline: [
     "3 m indoor line / 10 m outdoor line",
     "3 m indoor line / 20 m outdoor line",
+    "3 m indoor line / 30 m outdoor line",
     "6 m indoor line / 10 m outdoor line",
+    "6 m indoor line / 20 m outdoor line",
+    "6 m indoor line / 30 m outdoor line",
+    "10 m indoor line / 10 m outdoor line",
+    "10 m indoor line / 20 m outdoor line",
+    "10 m indoor line / 30 m outdoor line",
+    "20 m indoor line / 10 m outdoor line",
+    "20 m indoor line / 20 m outdoor line",
+    "30 m indoor line / 10 m outdoor line"
   ],
 };
 
@@ -22,7 +31,7 @@ export default function SitePlan2Screen({ navigation }) {
     CPPAcc: [],
     CRP: "없음",
     CRPAcc: [],
-    HeTrans: "없음",
+    HeTransferline: "없음",
   });
 
   const handleSingleSelect = (category, value) => {
@@ -117,12 +126,12 @@ export default function SitePlan2Screen({ navigation }) {
           {/* He Transfer Line (conditional dropdown) */}
           <Text style={styles.label}>He Transfer Line</Text>
           <Picker
-            selectedValue={selectedOptions.HeTrans}
-            onValueChange={(value) => handleSingleSelect("HeTrans", value)}
+            selectedValue={selectedOptions.HeTransferline}
+            onValueChange={(value) => handleSingleSelect("HeTransferline", value)}
             style={styles.picker}
           >
             <Picker.Item label="없음" value="없음" />
-            {sitePlanOptions.HeTrans.map((option) => (
+            {sitePlanOptions.HeTransferline.map((option) => (
               <Picker.Item key={option} label={option} value={option} />
             ))}
           </Picker>

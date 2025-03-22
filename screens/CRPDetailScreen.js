@@ -14,7 +14,7 @@ export default function CRPDetailScreen() {
   const navigation = useNavigation();
   const { selections } = useSelection();
   const [crpDataList, setCrpDataList] = useState([]);
-  const [heTransData, setHeTransData] = useState(null);
+  const [heTransferlineData, setHeTransferlineData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -35,14 +35,14 @@ export default function CRPDetailScreen() {
         setCrpDataList(crpResults);
 
         // HeTransferline은 단일 값만 요청
-        const heTransRes = await fetch(
+        const heTransferlineRes = await fetch(
           `https://brkr-server.onrender.com/excel/HeTransferline/${encodeURIComponent(
-            selections.HeTrans
+            selections.HeTransferline
           )}`,
           { headers: { Authorization: auth } }
         );
-        const heTransJson = await heTransRes.json();
-        setHeTransData(heTransJson);
+        const heTransferlineJson = await heTransferlineRes.json();
+        setHeTransferlineData(heTransferlineJson);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -89,8 +89,8 @@ export default function CRPDetailScreen() {
         )
       )}
 
-      {heTransData && !heTransData.error &&
-        renderTable(heTransData, "He Transferline 정보")}
+      {heTransferlineData && !heTransferlineData.error &&
+        renderTable(heTransferlineData, "He Transferline 정보")}
 
       <View style={styles.footerButtons}>
         <TouchableOpacity

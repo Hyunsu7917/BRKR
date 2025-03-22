@@ -71,15 +71,15 @@ export default function SitePlan() {
         </CardContent>
       </Card>
       <View className="flex justify-between">
-      <View style={styles.footerButtons}>
-        <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
-          <Text>이전</Text>
-        </TouchableOpacity>
+        <View style={styles.footerButtons}>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
+            <Text>이전</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("SitePlan2Screen")}>
-          <Text>다음</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("SitePlan2Screen")}>
+            <Text>다음</Text>
+          </TouchableOpacity>
+        </View>
 
       </View>
     </View>

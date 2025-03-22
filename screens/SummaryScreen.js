@@ -9,7 +9,7 @@ export default function SummaryScreen() {
 
   const categories = [
     "Magnet", "Console", "Autosampler", "Accessories", "Utilities",
-    "Probe", "CPP", "CPP Acc", "CRP", "CRP Acc", "He Trans"
+    "Probe", "CPP", "CPP Acc", "CRP", "CRP Acc", "HeTransferline"
   ];
 
   const renderValue = (value) => {

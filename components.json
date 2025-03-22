@@ -9,8 +9,8 @@
       "cssVariables": false
     },
     "aliases": {
-      "components": "@/components",
-      "utils": "@/lib/utils"
+      "components": "../components",
+      "utils": "../lib/utils"
     }
   }
   
