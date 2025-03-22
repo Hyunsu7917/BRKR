@@ -9,13 +9,31 @@ export default function TableView({ data = {}, title = "" }) {
         {Object.entries(data).map(([key, value]) => (
           <View style={styles.row} key={key}>
             <Text style={[styles.cell, styles.keyCell]}>{key}</Text>
-            <Text style={styles.cell}>{value}</Text>
+            <Text style={styles.cell}>
+              {formatValue(value)}
+            </Text>
           </View>
         ))}
       </View>
     </View>
   );
 }
+
+// 🔧 객체/배열이거나 이상한 값일 경우는 보기 좋게 처리
+const formatValue = (value) => {
+  if (typeof value === "string" || typeof value === "number") {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.join(", ");
+  }
+  if (value && typeof value === "object") {
+    return Object.entries(value)
+      .map(([k, v]) => `${k}: ${v}`)
+      .join(", ");
+  }
+  return ""; // null, undefined, 기타 등등
+};
 
 const styles = StyleSheet.create({
   section: {
