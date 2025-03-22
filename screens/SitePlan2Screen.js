@@ -11,7 +11,16 @@ const sitePlanOptions = {
   HeTrans: [
     "3 m indoor line / 10 m outdoor line",
     "3 m indoor line / 20 m outdoor line",
+    "3 m indoor line / 30 m outdoor line",
     "6 m indoor line / 10 m outdoor line",
+    "6 m indoor line / 20 m outdoor line",
+    "6 m indoor line / 30 m outdoor line",
+    "10 m indoor line / 10 m outdoor line",
+    "10 m indoor line / 20 m outdoor line",
+    "10 m indoor line / 30 m outdoor line",
+    "20 m indoor line / 10 m outdoor line",
+    "20 m indoor line / 20 m outdoor line",
+    "30 m indoor line / 10 m outdoor line",    
   ],
 };
 
