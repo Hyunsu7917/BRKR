@@ -1,6 +1,5 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
 import HomeScreen from "../screens/HomeScreen";
 import MenuScreen from "../screens/MenuScreen";
 import SitePlanScreen from "../screens/SitePlanScreen";
@@ -14,8 +13,7 @@ import CRPDetailScreen from "../screens/CRPDetailScreen";
 const Stack = createStackNavigator();
 
 const MainNavigator = () => {
-  return (
-    <NavigationContainer>
+  return (    
       <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="MenuScreen" component={MenuScreen} />
@@ -26,8 +24,7 @@ const MainNavigator = () => {
         <Stack.Screen name="ConsoleAndAutosamplerScreen" component={ConsoleAndAutosamplerScreen} />
         <Stack.Screen name="CPPDetailScreen" component={CPPDetailScreen} />
         <Stack.Screen name="CRPDetailScreen" component={CRPDetailScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+      </Stack.Navigator>    
   );
 };
 
