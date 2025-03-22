@@ -9,7 +9,7 @@ const sitePlanOptions = {
   CPPAcc: ["LN2dewar", "Prodigy Unit", "없음"],
   CRP: ["없음", "CRP"],
   CRPAcc: ["CU", "Outdoor", "Indoor", "Water Cooled", "BSNL", "없음"],
-  HeTrans: [
+  HeTransferline: [
     "3 m indoor line / 10 m outdoor line",
     "3 m indoor line / 20 m outdoor line",
     "3 m indoor line / 30 m outdoor line",
@@ -129,12 +129,12 @@ export default function SitePlan2Screen({ navigation }) {
 
           <Text style={styles.label}>He Transfer Line</Text>
           <Picker
-            selectedValue={selections.HeTrans}
-            onValueChange={(value) => handleSingleSelect("HeTrans", value)}
+            selectedValue={selections.HeTransferline}
+            onValueChange={(value) => handleSingleSelect("HeTransferline", value)}
             style={styles.picker}
           >
             <Picker.Item label="없음" value="없음" />
-            {sitePlanOptions.HeTrans.map((option) => (
+            {sitePlanOptions.HeTransferline.map((option) => (
               <Picker.Item key={option} label={option} value={option} />
             ))}
           </Picker>

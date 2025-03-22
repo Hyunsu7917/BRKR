@@ -80,7 +80,7 @@ export default function ConsoleAndAutosamplerScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate("NextScreen")}
+          onPress={() => navigation.navigate("CPPDetailScreen")}
         >
           <Text>다음</Text>
         </TouchableOpacity>

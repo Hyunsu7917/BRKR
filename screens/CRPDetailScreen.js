@@ -83,11 +83,14 @@ export default function CRPDetailScreen() {
 
       {crpDataList.map((data, index) =>
         data.error ? (
-          <Text style={styles.error} key={index}>{data.error}</Text>
+          <Text style={styles.error} key={`error-${index}`}>{data.error}</Text>
         ) : (
-          renderTable(data, "CRP Acc 정보")
+          <View key={`crp-${index}`}>
+            {renderTable(data, `CRP Acc 정보 ${index + 1}`)}
+          </View>
         )
       )}
+
 
       {heTransData && !heTransData.error &&
         renderTable(heTransData, "He Transferline 정보")}

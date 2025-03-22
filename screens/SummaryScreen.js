@@ -1,16 +1,17 @@
 import React, { useContext } from "react";
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { SelectionContext } from "../context/SelectionContext"; // 선택값 관리용 컨텍스트
+import { useSelection } from "../context/SelectionContext";
 
 
 export default function SummaryScreen() {
   const navigation = useNavigation();
-  const { selections } = useContext(SelectionContext);
+  const { selections } = useSelection(); 
+
 
   const categories = [
     "Magnet", "Console", "Autosampler", "Accessories", "Utilities",
-    "Probe", "CPP", "CPP Acc", "CRP", "CRP Acc", "He Trans"
+    "Probe", "CPP", "CPPAcc", "CRP", "CRPAcc", "HeTransferline"
   ];
 
   const renderValue = (value) => {

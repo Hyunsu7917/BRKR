@@ -51,10 +51,10 @@ export default function ItemDetailScreen() {
       <ScrollView style={styles.table}>{renderTable()}</ScrollView>
 
       <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
           <Text>이전</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("ConsoleAndAutosamplerScreen")}>
           <Text>다음</Text>
         </TouchableOpacity>
       </View>
