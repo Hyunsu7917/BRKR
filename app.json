@@ -12,18 +12,23 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff",
       "updates": {
-        "fallbackToCacheTimeout": 0
+        "fallbackToCacheTimeout": 0,
+        "enabled": true
       }
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.khyunsu.BRKRNEW"
+      "package": "com.khyunsu.BRKRNEW",
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,6 +37,9 @@
       "eas": {
         "projectId": "6a215b91-eeea-4f6f-81e3-4f39e16d39ca"
       }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/6a215b91-eeea-4f6f-81e3-4f39e16d39ca"
     }
   }
 }

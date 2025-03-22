@@ -4,6 +4,7 @@ import Constants from "expo-constants";
 import { NavigationContainer } from "@react-navigation/native";
 import { SelectionProvider } from "./context/SelectionContext";
 import MainNavigator from "./components/MainNavigator";
+import Constants from "expo-constants";
 
 export default function App() {
   useEffect(() => {
@@ -12,7 +13,7 @@ export default function App() {
         const res = await fetch("https://your-server.com/latest-version.json");
         const latest = await res.json();
 
-        const currentVersion = Constants.manifest.version; // 예: "1.0.0"
+        const currentVersion = Constants.expoConfig?.version; 
 
         if (latest.version !== currentVersion) {
           Alert.alert(
@@ -23,7 +24,7 @@ export default function App() {
               {
                 text: "업데이트",
                 onPress: () => {
-                  Linking.openURL(latest.apkUrl); // APK 다운로드 페이지로 이동
+                  Linking.openURL(latest.apkUrl); 
                 },
               },
             ]

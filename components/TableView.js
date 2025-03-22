@@ -32,7 +32,7 @@ const formatValue = (value) => {
       .map(([k, v]) => `${k}: ${v}`)
       .join(", ");
   }
-  return ""; // null, undefined, 기타 등등
+  return ""; 
 };
 
 const styles = StyleSheet.create({

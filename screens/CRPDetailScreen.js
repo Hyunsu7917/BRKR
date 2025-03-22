@@ -25,7 +25,7 @@ export default function CRPDetailScreen() {
       try {
         const auth = "Basic " + btoa("BBIOK:Bruker_2025");
   
-        // CRPAcc 여러 항목 요청
+     
         const crpPromises = selections.CRPAcc.map((acc) =>
           fetch(
             `https://brkr-server.onrender.com/excel/CRPAcc/${encodeURIComponent(acc)}`,
@@ -35,7 +35,7 @@ export default function CRPDetailScreen() {
         const crpResults = await Promise.all(crpPromises);
         setCrpDataList(crpResults);
   
-        // ✅ HeTransferline 선택값이 존재할 때만 요청
+       
         if (selections.HeTransferline && selections.HeTransferline !== "없음") {
           const heTransRes = await fetch(
             `https://brkr-server.onrender.com/excel/HeTransferline/${encodeURIComponent(selections.HeTransferline)}`,
