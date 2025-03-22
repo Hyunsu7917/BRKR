@@ -43,7 +43,7 @@ export default function SitePlanScreen() {
                   key={option}
                   style={[
                     styles.optionButton,
-                    selections[category].includes(option) && styles.selectedButton,
+                    selections[category]?.includes(option) && styles.selectedButton,
                   ]}
                   onPress={() => handleMultiToggle(category, option)}
                 >

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useSelection } from "../context/SelectionContext";
@@ -34,9 +34,10 @@ export default function SitePlan2Screen({ navigation }) {
 
   const handleMultiToggle = (category, value) => {
     setSelections((prev) => {
-      const updated = prev[category].includes(value)
-        ? prev[category].filter((item) => item !== value)
-        : [...prev[category], value];
+      const current = prev[category] || [];
+      const updated = current.includes(value)
+        ? current.filter((item) => item !== value)
+        : [...current, value];
       return { ...prev, [category]: updated };
     });
   };
@@ -51,7 +52,10 @@ export default function SitePlan2Screen({ navigation }) {
         {sitePlanOptions.Probe.map((option) => (
           <TouchableOpacity
             key={option}
-            style={[styles.optionButton, selections.Probe.includes(option) && styles.selectedButton]}
+            style={[
+              styles.optionButton,
+              selections.Probe?.includes(option) && styles.selectedButton
+            ]}
             onPress={() => handleMultiToggle("Probe", option)}
           >
             <Text>{option}</Text>
@@ -71,7 +75,7 @@ export default function SitePlan2Screen({ navigation }) {
         ))}
       </Picker>
 
-      {/* CPP Acc (multi, conditional) */}
+      {/* CPP Acc (Multi-select, Conditional) */}
       {selections.CPP !== "없음" && (
         <>
           <Text style={styles.label}>CPP Acc</Text>
@@ -79,7 +83,10 @@ export default function SitePlan2Screen({ navigation }) {
             {sitePlanOptions.CPPAcc.map((option) => (
               <TouchableOpacity
                 key={option}
-                style={[styles.optionButton, selections.CPPAcc.includes(option) && styles.selectedButton]}
+                style={[
+                  styles.optionButton,
+                  selections.CPPAcc?.includes(option) && styles.selectedButton
+                ]}
                 onPress={() => handleMultiToggle("CPPAcc", option)}
               >
                 <Text>{option}</Text>
@@ -101,7 +108,7 @@ export default function SitePlan2Screen({ navigation }) {
         ))}
       </Picker>
 
-      {/* CRP Acc (multi, conditional) */}
+      {/* CRP Acc + He Transfer (Conditional) */}
       {selections.CRP !== "없음" && (
         <>
           <Text style={styles.label}>CRP Acc</Text>
@@ -109,7 +116,10 @@ export default function SitePlan2Screen({ navigation }) {
             {sitePlanOptions.CRPAcc.map((option) => (
               <TouchableOpacity
                 key={option}
-                style={[styles.optionButton, selections.CRPAcc.includes(option) && styles.selectedButton]}
+                style={[
+                  styles.optionButton,
+                  selections.CRPAcc?.includes(option) && styles.selectedButton
+                ]}
                 onPress={() => handleMultiToggle("CRPAcc", option)}
               >
                 <Text>{option}</Text>
@@ -117,7 +127,6 @@ export default function SitePlan2Screen({ navigation }) {
             ))}
           </View>
 
-          {/* He Transfer Line (conditional dropdown) */}
           <Text style={styles.label}>He Transfer Line</Text>
           <Picker
             selectedValue={selections.HeTrans}
@@ -137,7 +146,7 @@ export default function SitePlan2Screen({ navigation }) {
         <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
           <Text>이전</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("SummaryScreen")}> 
+        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("SummaryScreen")}>
           <Text>다음</Text>
         </TouchableOpacity>
       </View>
