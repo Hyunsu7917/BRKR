@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { View, Text } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
