@@ -1,8 +1,8 @@
+// ✅ 수정된 SitePlanScreen.js
 import React, { useState } from "react";
-import { View, Text } from "react-native";
-import { Button } from "@/components/ui/button";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import { useNavigation } from "@react-navigation/native";
 
 const sitePlanOptions = {
   Magnet: ["400core", "400evo", "500evo", "600evo", "700evo"],
@@ -12,7 +12,8 @@ const sitePlanOptions = {
   Utilities: ["UPS", "Compressor", "Air-dryer"],
 };
 
-export default function SitePlan() {
+export default function SitePlanScreen() {
+  const navigation = useNavigation(); // ✅ navigation 객체 가져오기
   const [selectedOptions, setSelectedOptions] = useState({
     Magnet: "",
     Console: "",
@@ -21,11 +22,11 @@ export default function SitePlan() {
     Utilities: [],
   });
 
-  const handleSelectChange = (category, value) => {
+  const handleSingleSelect = (category, value) => {
     setSelectedOptions((prev) => ({ ...prev, [category]: value }));
   };
 
-  const handleMultiSelect = (category, value) => {
+  const handleMultiToggle = (category, value) => {
     setSelectedOptions((prev) => {
       const updated = prev[category].includes(value)
         ? prev[category].filter((item) => item !== value)
@@ -35,56 +36,100 @@ export default function SitePlan() {
   };
 
   return (
-    <View className="p-6 flex flex-col gap-4">
-      <Card>
-        <CardContent className="p-4 space-y-4">
-          {Object.keys(sitePlanOptions).map((category) => (
-            <View key={category} className="flex items-center justify-between">
-              <span className="font-semibold">{category}</span>
-              {category === "Accessories" || category === "Utilities" ? (
-                <View className="flex gap-2">
-                  {sitePlanOptions[category].map((option) => (
-                    <Button
-                      key={option}
-                      variant={selectedOptions[category].includes(option) ? "default" : "outline"}
-                      onClick={() => handleMultiSelect(category, option)}
-                    >
-                      {option}
-                    </Button>
-                  ))}
-                </View>
-              ) : (
-                <Select onValueChange={(value) => handleSelectChange(category, value)}>
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder="선택" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {sitePlanOptions[category].map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {option}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      {Object.keys(sitePlanOptions).map((category) => (
+        <View key={category} style={styles.categoryContainer}>
+          <Text style={styles.categoryTitle}>{category}</Text>
+          {category === "Accessories" || category === "Utilities" ? (
+            <View style={styles.buttonGroup}>
+              {sitePlanOptions[category].map((option) => (
+                <TouchableOpacity
+                  key={option}
+                  style={[
+                    styles.optionButton,
+                    selectedOptions[category].includes(option) && styles.selectedButton,
+                  ]}
+                  onPress={() => handleMultiToggle(category, option)}
+                >
+                  <Text style={styles.optionText}>{option}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
-          ))}
-        </CardContent>
-      </Card>
-      <View className="flex justify-between">
+          ) : (
+            <View style={styles.pickerWrapper}>
+              <Picker
+                selectedValue={selectedOptions[category]}
+                onValueChange={(value) => handleSingleSelect(category, value)}
+              >
+                <Picker.Item label="선택" value="" />
+                {sitePlanOptions[category].map((option) => (
+                  <Picker.Item key={option} label={option} value={option} />
+                ))}
+              </Picker>
+            </View>
+          )}
+        </View>
+      ))}
+
       <View style={styles.footerButtons}>
         <TouchableOpacity style={styles.navButton} onPress={() => navigation.goBack()}>
           <Text>이전</Text>
         </TouchableOpacity>
-
         <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("SitePlan2Screen")}>
           <Text>다음</Text>
         </TouchableOpacity>
       </View>
-
-      </View>
-    </View>
+    </ScrollView>
   );
 }
 
-
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  categoryContainer: {
+    marginBottom: 24,
+  },
+  categoryTitle: {
+    fontWeight: "bold",
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  buttonGroup: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  optionButton: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 8,
+    borderRadius: 4,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  selectedButton: {
+    backgroundColor: "#007AFF",
+    borderColor: "#007AFF",
+  },
+  optionText: {
+    color: "#000",
+  },
+  pickerWrapper: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  footerButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 24,
+  },
+  navButton: {
+    padding: 12,
+    backgroundColor: "#eee",
+    borderRadius: 4,
+  },
+});
