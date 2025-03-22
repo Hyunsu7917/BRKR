@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
+import { useSelection } from "../context/SelectionContext";
+
 
 const sitePlanOptions = {
   Magnet: ["400core", "400evo", "500evo", "600evo", "700evo"],

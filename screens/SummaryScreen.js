@@ -3,6 +3,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-nati
 import { useNavigation } from "@react-navigation/native";
 import { SelectionContext } from "../context/SelectionContext"; // 선택값 관리용 컨텍스트
 
+
 export default function SummaryScreen() {
   const navigation = useNavigation();
   const { selections } = useContext(SelectionContext);

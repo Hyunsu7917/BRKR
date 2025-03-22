@@ -1,9 +1,17 @@
-import React, { createContext, useState } from "react";
+// context/SelectionContext.js
+import React, { createContext, useContext, useState } from "react";
 
-export const SelectionContext = createContext();
+const SelectionContext = createContext();
 
 export const SelectionProvider = ({ children }) => {
-  const [selections, setSelections] = useState({});
+  const [selections, setSelections] = useState({
+    Probe: [],
+    CPP: "없음",
+    CPPAcc: [],
+    CRP: "없음",
+    CRPAcc: [],
+    HeTransferline: "없음",
+  });
 
   return (
     <SelectionContext.Provider value={{ selections, setSelections }}>
@@ -11,3 +19,5 @@ export const SelectionProvider = ({ children }) => {
     </SelectionContext.Provider>
   );
 };
+
+export const useSelection = () => useContext(SelectionContext);

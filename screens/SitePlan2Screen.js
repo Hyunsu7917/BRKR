@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import { useSelection } from "../context/SelectionContext";
 
 const sitePlanOptions = {
   Probe: ["iProbe", "RTProbe", "CP-MAS", "HR-MAS", "TXI", "없음"],
