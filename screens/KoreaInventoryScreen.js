@@ -34,10 +34,11 @@ export default function KoreaInventoryScreen({ navigation }) {
           }
         }
       );
+      console.log("서버 응답:", res.data);
 
-      // 배열 형태 보장 + 필요한 필드만 추출
-      const filtered = Array.isArray(res.data) ? res.data : [res.data];
-      const trimmed = filtered.map(row => ({
+      const resultArray = Array.isArray(res.data) ? res.data : [res.data];
+
+      const trimmed = resultArray.map((row) => ({
         'Part#': row['Part#'],
         'Serial #': row['Serial #'],
         'PartName': row['PartName'],
@@ -54,7 +55,10 @@ export default function KoreaInventoryScreen({ navigation }) {
 
   const renderTable = () => {
     return data.map((row, index) => (
-      <View key={index} style={styles.row}>
+      <View
+        key={`${row['Part#']}_${row['Serial #']}_${index}`} // 중복 방지용
+        style={styles.row}
+      >
         <Text style={styles.cell}>{row['Part#']}</Text>
         <Text style={styles.cell}>{row['Serial #']}</Text>
         <Text style={styles.cell}>{row['PartName']}</Text>
@@ -83,17 +87,22 @@ export default function KoreaInventoryScreen({ navigation }) {
       </View>
 
       <View style={styles.buttonRow}>
-        <Button title="리스트 보기" onPress={() => navigation.navigate('KoreaInventoryListScreen')} />
+        <Button
+          title="리스트 보기"
+          onPress={() => navigation.navigate('KoreaInventoryListScreen')}
+        />
         <Button title="파트 조회" onPress={fetchInventory} />
       </View>
 
       <ScrollView style={{ marginTop: 10 }}>
-        <View style={styles.headerRow}>
-          <Text style={[styles.cell, styles.header]}>Part#</Text>
-          <Text style={[styles.cell, styles.header]}>Serial #</Text>
-          <Text style={[styles.cell, styles.header]}>PartName</Text>
-          <Text style={[styles.cell, styles.header]}>Remark</Text>
-        </View>
+        {data.length > 0 && (
+          <View style={styles.headerRow}>
+            <Text style={[styles.cell, styles.header]}>Part#</Text>
+            <Text style={[styles.cell, styles.header]}>Serial #</Text>
+            <Text style={[styles.cell, styles.header]}>PartName</Text>
+            <Text style={[styles.cell, styles.header]}>Remark</Text>
+          </View>
+        )}
         {renderTable()}
       </ScrollView>
     </SafeAreaView>
