@@ -2,7 +2,7 @@
   "expo": {
     "name": "BRKR",
     "slug": "BRKR-NEW",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "light",
@@ -24,12 +24,11 @@
     },
     "android": {
       "name": "BRKR",
-      "package": "com.khyunsu.brkr",
+      "package": "com.khyunsu.BRKRNEW",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.khyunsu.BRKRNEW",
       "runtimeVersion": "1.0.0"
     },
     "web": {
@@ -41,7 +40,7 @@
       }
     },
     "updates": {
-      "url": "https://expo.dev/artifacts/eas/k3rjaa7axiyRhmqwGuH5Zb.apk"
+      "url": "https://u.expo.dev/6a215b91-eeea-4f6f-81e3-4f39e16d39ca"
     }
   }
 }
