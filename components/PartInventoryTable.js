@@ -1,29 +1,51 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 
-export default function PartInventoryTable({ data = [] }) {
-  const headers = ["Part#", "Serial #", "PartName", "Remark", "사용처"];
-
+export default function PartInventoryTable({ data }) {
   return (
-    <View style={styles.tableContainer}>
-      <View style={[styles.row, styles.headerRow]}>
-        {headers.map((header, i) => (
-          <Text key={i} style={[styles.cell, styles.headerCell]}>
-            {header}
-          </Text>
+    <ScrollView horizontal>
+      <View style={styles.tableContainer}>
+        {/* Header */}
+        <View style={[styles.row, styles.headerRow]}>
+          <View style={[styles.cell, styles.partCell]}>
+            <Text style={styles.headerText}>Part#</Text>
+          </View>
+          <View style={[styles.cell, styles.serialCell]}>
+            <Text style={styles.headerText}>Serial #</Text>
+          </View>
+          <View style={[styles.cell, styles.nameCell]}>
+            <Text style={styles.headerText}>PartName</Text>
+          </View>
+          <View style={[styles.cell, styles.remarkCell]}>
+            <Text style={styles.headerText}>Remark</Text>
+          </View>
+          <View style={[styles.cell, styles.usageCell]}>
+            <Text style={styles.headerText}>사용처</Text>
+          </View>
+        </View>
+
+        {/* Data Rows */}
+        {data.map((row, index) => (
+          <View key={index} style={styles.row}>
+            <View style={[styles.cell, styles.partCell]}>
+              <Text>{row["Part#"]}</Text>
+            </View>
+            <View style={[styles.cell, styles.serialCell]}>
+              <Text>{row["Serial #"]}</Text>
+            </View>
+            <View style={[styles.cell, styles.nameCell]}>
+              <Text>{row["PartName"]}</Text>
+            </View>
+            <View style={[styles.cell, styles.remarkCell]}>
+              <Text>{row["Remark"]}</Text>
+            </View>
+            <View style={[styles.cell, styles.usageCell]}>
+              <Text>{row["사용처"]}</Text>
+            </View>
+          </View>
         ))}
       </View>
-
-      {data.map((row, rowIndex) => (
-        <View key={rowIndex} style={styles.row}>
-          <Text style={styles.cell}>{row["Part#"]}</Text>
-          <Text style={styles.cell}>{row["Serial #"]}</Text>
-          <Text style={styles.cell}>{row["PartName"]}</Text>
-          <Text style={styles.cell}>{row["Remark"]}</Text>
-          <Text style={styles.cell}>{row["사용처"]}</Text>
-        </View>
-      ))}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -32,24 +54,41 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 6,
-    marginBottom: 20,
+    margin: 10,
   },
   row: {
     flexDirection: "row",
     borderBottomWidth: 1,
     borderColor: "#eee",
   },
+  cell: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 5,
+    borderRightWidth: 0.5,
+    borderBottomWidth: 0.5,
+    borderColor: "#ccc",
+  },
+  partCell: {
+    width: 80,
+  },
+  serialCell: {
+    width: 60,
+  },
+  nameCell: {
+    width: 100,
+  },
+  remarkCell: {
+    width: 100,
+  },
+  usageCell: {
+    width: 80,
+  },
   headerRow: {
     backgroundColor: "#f2f2f2",
   },
-  cell: {
-    flex: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 5,
-    fontSize: 13,
-  },
-  headerCell: {
+  headerText: {
     fontWeight: "bold",
-    textAlign: "center",
   },
 });

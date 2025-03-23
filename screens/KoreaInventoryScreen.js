@@ -126,8 +126,26 @@ export default function KoreaInventoryScreen({ navigation }) {
             });
           }}
         />
-
+        <Button
+          title="서버 업로드"
+          onPress={async () => {
+            try {
+              const res = await axios.post("https://brkr-server.onrender.com/api/sync-usage-to-excel", {}, {
+                auth: {
+                  username: "BBIOK",
+                  password: "Bruker_2025"
+                }
+              });
+              alert("서버 업로드 완료!");
+            } catch (err) {
+              console.error("❌ 서버 업로드 실패:", err);
+              alert("서버 업로드 실패");
+            }
+          }}
+          color="#007bff"
+        />
       </View>
+      
     </SafeAreaView>
   );
 }
