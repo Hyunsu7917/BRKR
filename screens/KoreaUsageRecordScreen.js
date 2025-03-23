@@ -36,7 +36,7 @@ export default function KoreaUsageRecordScreen({ route, navigation }) {
       "PartName": selectedPart['PartName'],
       "Remark": remark,
       "UsageNote": usageNote,
-      "Timestamp": new Date().toISOString(),
+      
     };
   
     try {

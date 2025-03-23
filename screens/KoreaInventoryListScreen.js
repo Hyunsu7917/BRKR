@@ -12,22 +12,38 @@ export default function KoreaInventoryListScreen() {
     try {
       setLoading(true);
       const response = await axios.get(
-        `https://brkr-server.onrender.com/excel/part/all?ts=${Date.now()}`, // ✅ 캐시 방지용 timestamp 쿼리 추가
+        `https://brkr-server.onrender.com/excel/part/all?ts=${Date.now()}`,
         {
           auth: {
             username: "BBIOK",
             password: "Bruker_2025",
           },
         }
-      );      
+      );
 
-      const parsed = response.data.map((item) => ({
-        "Part#": item["Part#"] || "",
-        "Serial #": item["Serial #"] || "",
-        "PartName": item["PartName"] || "",
-        "Remark": item["Remark"] || "",
-        "사용처": item["사용처"] || "",
-      }));
+      const usageRes = await axios.get("https://brkr-server.onrender.com/api/usage-json", {
+        auth: {
+          username: "BBIOK",
+          password: "Bruker_2025",
+        },
+      });
+      const usageMap = new Map();
+      usageRes.data.forEach((item) => {
+        const key = `${item["Part#"]}_${item["Serial #"]}`;
+        usageMap.set(key, item);
+      });
+
+      const parsed = response.data.map((item) => {
+        const key = `${item["Part#"]}_${item["Serial #"]}`;
+        const usage = usageMap.get(key);
+        return {
+          "Part#": item["Part#"] || "",
+          "Serial #": item["Serial #"] || "",
+          "PartName": item["PartName"] || "",
+          "Remark": usage?.Remark || item["Remark"] || "",
+          "사용처": usage?.UsageNote || item["사용처"] || "",
+        };
+      });
 
       setData(parsed);
     } catch (err) {
@@ -52,7 +68,7 @@ export default function KoreaInventoryListScreen() {
         }
       );
       Alert.alert("서버 업로드 완료", "최신 데이터로 동기화되었습니다.");
-      await fetchInventory(); // ✅ 업로드 후 재호출
+      await fetchInventory();
     } catch (err) {
       console.error("❌ 서버 업로드 실패:", err);
       Alert.alert("서버 업로드 실패", "엑셀 파일 업데이트 중 문제가 발생했습니다.");
