@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
+import axios from 'axios';
+
 
 export default function KoreaUsageRecordScreen({ route, navigation }) {
   // ✅ selectedPart 방어 처리
