@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { ScrollView, Text, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import axios from "axios";
+import TableView from "@/components/TableView"; // 테이블 컴포넌트 사용
 
 export default function KoreaInventoryListScreen() {
   const [data, setData] = useState([]);
@@ -11,55 +13,49 @@ export default function KoreaInventoryListScreen() {
         const response = await axios.get("https://brkr-server.onrender.com/excel/part/all", {
           auth: {
             username: "BBIOK",
-            password: "Bruker_2025"
-          }
+            password: "Bruker_2025",
+          },
         });
-        setData(response.data); // ✅ 여기가 핵심!
+
+        // ✅ 테이블에 맞는 형식으로 데이터 재구성
+        const parsed = response.data.map((item) => ({
+          "Part#": item["Part#"] || "",
+          "Serial #": item["Serial #"] || "",
+          "PartName": item["PartName"] || "",
+          "Remark": item["Remark"] || "",
+          "사용처": item["사용처"] || "",
+        }));
+
+        setData(parsed);
       } catch (err) {
         console.error("불러오기 실패:", err);
       }
     };
-  
+
     fetchInventory();
-  }, []);  
+  }, []);
+
+  const headers = ["Part#", "Serial #", "PartName", "Remark", "사용처"];
 
   return (
-    <ScrollView>
-      <View style={styles.header}>
-        <Text style={styles.cell}>Part#</Text>
-        <Text style={styles.cell}>Serial #</Text>
-        <Text style={styles.cell}>PartName</Text>
-        <Text style={styles.cell}>Remark</Text>
-        <Text style={styles.cell}>사용처</Text>
-      </View>
-      {data.map((row, index) => (
-        <View key={index} style={styles.row}>
-          <Text style={styles.cell}>{row["Part#"]}</Text>
-          <Text style={styles.cell}>{row["Serial #"]}</Text>
-          <Text style={styles.cell}>{row["PartName"]}</Text>
-          <Text style={styles.cell}>{row["Remark"]}</Text>
-          <Text style={styles.cell}>{row["사용처"]}</Text>
-        </View>
-      ))}
-    </ScrollView>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>국내 재고 리스트</Text>
+      <ScrollView horizontal>
+        <TableView headers={headers} data={data} />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    backgroundColor: '#ddd',
-    paddingVertical: 6,
-  },
-  row: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderColor: '#eee',
-    paddingVertical: 6,
-  },
-  cell: {
+  container: {
     flex: 1,
-    textAlign: 'center',
-    fontSize: 12,
+    padding: 10,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 12,
+    textAlign: "center",
   },
 });
