@@ -11,7 +11,7 @@ const MenuScreen = ({ navigation }) => {
         <Text style={styles.buttonText}>Site Plan</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={() => console.log("국내 재고 조회 (준비 중)")}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("KoreaInventoryScreen")}>
         <Text style={styles.buttonText}>국내 재고 조회</Text>
       </TouchableOpacity>
 

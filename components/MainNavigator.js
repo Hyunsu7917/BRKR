@@ -9,7 +9,8 @@ import ItemDetailScreen from "../screens/ItemDetailScreen";
 import ConsoleAndAutosamplerScreen from "../screens/ConsoleAndAutosamplerScreen";
 import CPPDetailScreen from "../screens/CPPDetailScreen";
 import CRPDetailScreen from "../screens/CRPDetailScreen";
-
+import KoreaInventoryScreen from "../screens/KoreaInventoryScreen";
+import KoreaInventoryListScreen from "../screens/KoreaInventoryListScreen";
 const Stack = createStackNavigator();
 
 const MainNavigator = () => {
@@ -24,6 +25,8 @@ const MainNavigator = () => {
         <Stack.Screen name="ConsoleAndAutosamplerScreen" component={ConsoleAndAutosamplerScreen} />
         <Stack.Screen name="CPPDetailScreen" component={CPPDetailScreen} />
         <Stack.Screen name="CRPDetailScreen" component={CRPDetailScreen} />
+        <Stack.Screen name="KoreaInventoryScreen" component={KoreaInventoryScreen} />
+        <Stack.Screen name="KoreaInventoryListScreen" component={KoreaInventoryListScreen} />
       </Stack.Navigator>    
   );
 };
