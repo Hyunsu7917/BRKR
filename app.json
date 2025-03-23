@@ -4,7 +4,7 @@
     "slug": "BRKR-NEW",
     "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/nmricon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "runtimeVersion": {
@@ -31,8 +31,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "runtimeVersion": "1.0.0"
+      }
+      
     },
     "web": {
       "favicon": "./assets/favicon.png"
