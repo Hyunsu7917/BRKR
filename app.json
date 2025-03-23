@@ -4,7 +4,7 @@
     "slug": "BRKR-NEW",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/nmricon.png",
+    "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -23,6 +23,8 @@
       }
     },
     "android": {
+      "name": "BRKR",
+      "package": "com.khyunsu.brkr",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
