@@ -28,7 +28,7 @@ const MainNavigator = () => {
         <Stack.Screen name="CRPDetailScreen" component={CRPDetailScreen} />
         <Stack.Screen name="KoreaInventoryScreen" component={KoreaInventoryScreen} />
         <Stack.Screen name="KoreaInventoryListScreen" component={KoreaInventoryListScreen} />
-        <Stack.Screen name="KoreaUsageRecordScreen" component={KoreaUsageRecordScreen} />
+        <Stack.Screen name="KoreaUsageRecordScreen" component={KoreaUsageRecordScreen} />        
       </Stack.Navigator>    
   );
 };

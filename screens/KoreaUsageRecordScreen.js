@@ -10,6 +10,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
+import { Alert } from 'react-native';
+
 
 
 export default function KoreaUsageRecordScreen({ route, navigation }) {
@@ -39,7 +41,7 @@ export default function KoreaUsageRecordScreen({ route, navigation }) {
   
     try {
       await axios.post(
-        'https://brkr-server.onrender.com/usage',
+        'https://brkr-server.onrender.com/api/save-usage',
         usageData,
         {
           auth: {
