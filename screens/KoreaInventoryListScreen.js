@@ -1,48 +1,82 @@
-import React, { useEffect, useState } from "react";
-import { ScrollView, Text, StyleSheet, View } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { ScrollView, Text, StyleSheet, View, Alert, Button, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import PartInventoryTable from "@/components/PartInventoryTable";
 
 export default function KoreaInventoryListScreen() {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchInventory = async () => {
-      try {
-        const response = await axios.get("https://brkr-server.onrender.com/excel/part/all", {
+  const fetchInventory = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("https://brkr-server.onrender.com/excel/part/all", {
+        auth: {
+          username: "BBIOK",
+          password: "Bruker_2025",
+        },
+      });
+
+      const parsed = response.data.map((item) => ({
+        "Part#": item["Part#"] || "",
+        "Serial #": item["Serial #"] || "",
+        "PartName": item["PartName"] || "",
+        "Remark": item["Remark"] || "",
+        "사용처": item["사용처"] || "",
+      }));
+
+      setData(parsed);
+    } catch (err) {
+      console.error("❌ 불러오기 실패:", err);
+      Alert.alert("불러오기 실패", "재고 데이터를 불러올 수 없습니다.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const handleServerSync = async () => {
+    try {
+      setLoading(true);
+      await axios.post(
+        "https://brkr-server.onrender.com/api/sync-usage-to-excel",
+        {},
+        {
           auth: {
             username: "BBIOK",
             password: "Bruker_2025",
           },
-        });
+        }
+      );
+      Alert.alert("서버 업로드 완료", "최신 데이터로 동기화되었습니다.");
+      await fetchInventory(); // ✅ 업로드 후 재호출
+    } catch (err) {
+      console.error("❌ 서버 업로드 실패:", err);
+      Alert.alert("서버 업로드 실패", "엑셀 파일 업데이트 중 문제가 발생했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        // ✅ 필요한 열만 추려내기
-        const parsed = response.data.map((item) => ({
-          "Part#": item["Part#"] || "",
-          "Serial #": item["Serial #"] || "",
-          "PartName": item["PartName"] || "",
-          "Remark": item["Remark"] || "",
-          "사용처": item["사용처"] || "",
-        }));
-
-        setData(parsed);
-      } catch (err) {
-        console.error("불러오기 실패:", err);
-      }
-    };
-
+  useEffect(() => {
     fetchInventory();
-  }, []);
-
-  const headers = ["Part#", "Serial #", "PartName", "Remark", "사용처"];
+  }, [fetchInventory]);
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>국내 재고 리스트</Text>
-      <ScrollView horizontal>        
-        <PartInventoryTable data={data} />        
-      </ScrollView>
+
+      <View style={styles.syncButtonContainer}>
+        <Button title="🔄 서버 동기화" onPress={handleServerSync} color="#007bff" />
+      </View>
+
+      {loading ? (
+        <ActivityIndicator size="large" color="#007bff" style={{ marginTop: 30 }} />
+      ) : (
+        <ScrollView horizontal>
+          <PartInventoryTable data={data} />
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
@@ -58,5 +92,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 12,
     textAlign: "center",
+  },
+  syncButtonContainer: {
+    alignItems: "flex-end",
+    marginBottom: 12,
   },
 });
