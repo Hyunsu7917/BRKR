@@ -11,12 +11,15 @@ export default function KoreaInventoryListScreen() {
   const fetchInventory = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get("https://brkr-server.onrender.com/excel/part/all", {
-        auth: {
-          username: "BBIOK",
-          password: "Bruker_2025",
-        },
-      });
+      const response = await axios.get(
+        `https://brkr-server.onrender.com/excel/part/all?ts=${Date.now()}`, // ✅ 캐시 방지용 timestamp 쿼리 추가
+        {
+          auth: {
+            username: "BBIOK",
+            password: "Bruker_2025",
+          },
+        }
+      );      
 
       const parsed = response.data.map((item) => ({
         "Part#": item["Part#"] || "",
