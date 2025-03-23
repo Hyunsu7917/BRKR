@@ -11,29 +11,29 @@ export default function KoreaInventoryListScreen() {
   const fetchInventory = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `https://brkr-server.onrender.com/excel/part/all?ts=${Date.now()}`,
-        {
+      const ts = Date.now(); // 캐시 방지용
+      const [partRes, usageRes] = await Promise.all([
+        axios.get(`https://brkr-server.onrender.com/excel/part/all?ts=${ts}`, {
           auth: {
             username: "BBIOK",
             password: "Bruker_2025",
           },
-        }
-      );
+        }),
+        axios.get("https://brkr-server.onrender.com/api/usage-json", {
+          auth: {
+            username: "BBIOK",
+            password: "Bruker_2025",
+          },
+        }),
+      ]);
 
-      const usageRes = await axios.get("https://brkr-server.onrender.com/api/usage-json", {
-        auth: {
-          username: "BBIOK",
-          password: "Bruker_2025",
-        },
-      });
       const usageMap = new Map();
       usageRes.data.forEach((item) => {
         const key = `${item["Part#"]}_${item["Serial #"]}`;
         usageMap.set(key, item);
       });
 
-      const parsed = response.data.map((item) => {
+      const parsed = partRes.data.map((item) => {
         const key = `${item["Part#"]}_${item["Serial #"]}`;
         const usage = usageMap.get(key);
         return {
@@ -47,33 +47,29 @@ export default function KoreaInventoryListScreen() {
 
       setData(parsed);
     } catch (err) {
-      console.error("❌ 불러오기 실패:", err);
-      Alert.alert("불러오기 실패", "재고 데이터를 불러올 수 없습니다.");
+      console.error("❌ 불러오기 실패:", err?.response?.data || err.message);
+      Alert.alert("불러오기 실패", "서버로부터 재고 정보를 불러오지 못했습니다.");
     } finally {
       setLoading(false);
     }
   }, []);
 
+  // ✅ 서버 동기화 + 재조회 함수
   const handleServerSync = async () => {
     try {
-      setLoading(true);
-      await axios.post(
-        "https://brkr-server.onrender.com/api/sync-usage-to-excel",
-        {},
-        {
-          auth: {
-            username: "BBIOK",
-            password: "Bruker_2025",
-          },
-        }
-      );
-      Alert.alert("서버 업로드 완료", "최신 데이터로 동기화되었습니다.");
-      await fetchInventory();
+      const res = await axios.post("https://brkr-server.onrender.com/api/sync-usage-to-excel", {}, {
+        auth: {
+          username: "BBIOK",
+          password: "Bruker_2025",
+        },
+      });
+      Alert.alert("✅ 동기화 완료", res.data?.message || "서버 업데이트 완료");
+
+      // 동기화 완료 후 재조회
+      fetchInventory();
     } catch (err) {
-      console.error("❌ 서버 업로드 실패:", err);
-      Alert.alert("서버 업로드 실패", "엑셀 파일 업데이트 중 문제가 발생했습니다.");
-    } finally {
-      setLoading(false);
+      console.error("❌ 서버 동기화 실패:", err);
+      Alert.alert("❌ 동기화 실패", "서버 업데이트 중 오류가 발생했습니다.");
     }
   };
 
