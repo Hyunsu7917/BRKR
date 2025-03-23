@@ -8,7 +8,7 @@ export default function KoreaInventoryListScreen() {
   useEffect(() => {
     const fetchInventory = async () => {
       try {
-        const response = await axios.get("https://brkr-server.onrender.com/excel/Part/all", {
+        const response = await axios.get("https://brkr-server.onrender.com/excel/part/all", {
           auth: {
             username: "BBIOK",
             password: "Bruker_2025"
