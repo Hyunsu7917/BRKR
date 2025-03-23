@@ -8,20 +8,18 @@
     "icon": "./assets/images/nmricon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "runtimeVersion": {
-        "policy": "appVersion"
-      },
-      "splash": {
+    "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff",
-      "updates": {
-        "fallbackToCacheTimeout": 0,
-        "enabled": true
-      }
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "enabled": true,
+      "url": "https://u.expo.dev/6a215b91-eeea-4f6f-81e3-4f39e16d39ca"
     },
     "ios": {
-      "supportsTablet": true      
+      "supportsTablet": true
     },
     "android": {
       "name": "BRKR",
@@ -30,7 +28,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
-      
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -39,9 +36,6 @@
       "eas": {
         "projectId": "6a215b91-eeea-4f6f-81e3-4f39e16d39ca"
       }
-    },
-    "updates": {
-      "url": "https://u.expo.dev/6a215b91-eeea-4f6f-81e3-4f39e16d39ca"
     }
   }
 }
