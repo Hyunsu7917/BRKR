@@ -5,7 +5,7 @@
     "version": "1.0.2",
     "runtimeVersion": "1.0.2",
     "orientation": "portrait",
-    "icon": "./assets/images/nmricon.png",
+    "icon": "./assets/images/brukericon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
