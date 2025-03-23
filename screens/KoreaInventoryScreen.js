@@ -7,14 +7,19 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
+
+
 
 export default function KoreaInventoryScreen({ navigation }) {
   const [partNumber, setPartNumber] = useState('');
   const [partName, setPartName] = useState('');
   const [data, setData] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const fetchInventory = async () => {
     if (!partNumber && !partName) {
@@ -34,7 +39,6 @@ export default function KoreaInventoryScreen({ navigation }) {
           }
         }
       );
-      console.log("서버 응답:", res.data);
 
       const resultArray = Array.isArray(res.data) ? res.data : [res.data];
 
@@ -55,17 +59,22 @@ export default function KoreaInventoryScreen({ navigation }) {
 
   const renderTable = () => {
     return data.map((row, index) => (
-      <View
-        key={`${row['Part#']}_${row['Serial #']}_${index}`} // 중복 방지용
-        style={styles.row}
+      <TouchableOpacity
+        key={`${row['Part#']}_${row['Serial #']}_${index}`}
+        onPress={() => setSelectedRow(row)}
+        style={[
+          styles.row,
+          selectedRow === row && styles.selectedRow, // 선택 시 강조
+        ]}
       >
         <Text style={styles.cell}>{row['Part#']}</Text>
         <Text style={styles.cell}>{row['Serial #']}</Text>
         <Text style={styles.cell}>{row['PartName']}</Text>
         <Text style={styles.cell}>{row['Remark']}</Text>
-      </View>
+      </TouchableOpacity>
     ));
   };
+  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -87,10 +96,7 @@ export default function KoreaInventoryScreen({ navigation }) {
       </View>
 
       <View style={styles.buttonRow}>
-        <Button
-          title="리스트 보기"
-          onPress={() => navigation.navigate('KoreaInventoryListScreen')}
-        />
+        <Button title="리스트 보기" onPress={() => navigation.navigate('KoreaInventoryListScreen')} />
         <Button title="파트 조회" onPress={fetchInventory} />
       </View>
 
@@ -105,6 +111,23 @@ export default function KoreaInventoryScreen({ navigation }) {
         )}
         {renderTable()}
       </ScrollView>
+
+      <View style={styles.bottomButtons}>
+        <Button title="이전" onPress={() => navigation.goBack()} />
+        <Button
+          title="사용 기록"
+          onPress={() => {
+            if (!selectedRow) {
+              Alert.alert("선택된 항목이 없습니다");
+              return;
+            }
+            navigation.navigate('KoreaUsageRecordScreen', {
+              selectedPart: selectedRow,
+            });
+          }}
+        />
+
+      </View>
     </SafeAreaView>
   );
 }
@@ -132,11 +155,27 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     paddingVertical: 8,
   },
+  selectedRow: {
+    backgroundColor: '#d0ebff',
+  },
   cell: {
     flex: 1,
     textAlign: 'center',
   },
   header: {
     fontWeight: 'bold',
+  },
+  bottomButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: '#fff',
+  },
+  selectedRow: {
+    backgroundColor: '#d0e8ff',
   },
 });
