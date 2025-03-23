@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, StyleSheet } from "react-native";
+import { ScrollView, Text, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
-import TableView from "@/components/TableView"; // 테이블 컴포넌트 사용
+import PartInventoryTable from "@/components/PartInventoryTable";
 
 export default function KoreaInventoryListScreen() {
   const [data, setData] = useState([]);
@@ -17,7 +17,7 @@ export default function KoreaInventoryListScreen() {
           },
         });
 
-        // ✅ 테이블에 맞는 형식으로 데이터 재구성
+        // ✅ 필요한 열만 추려내기
         const parsed = response.data.map((item) => ({
           "Part#": item["Part#"] || "",
           "Serial #": item["Serial #"] || "",
@@ -40,8 +40,8 @@ export default function KoreaInventoryListScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>국내 재고 리스트</Text>
-      <ScrollView horizontal>
-        <TableView headers={headers} data={data} />
+      <ScrollView horizontal>        
+        <PartInventoryTable data={data} />        
       </ScrollView>
     </SafeAreaView>
   );
@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 18,
