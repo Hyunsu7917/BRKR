@@ -28,7 +28,7 @@ export default function CRPDetailScreen() {
      
         const crpPromises = selections.CRPAcc.map((acc) =>
           fetch(
-            `https://brkr-server.onrender.com/excel/CRPAcc/${encodeURIComponent(acc)}`,
+            `https://brkr-server.onrender.com/excel/CRPAcc/value/${encodeURIComponent(acc)}`,
             { headers: { Authorization: auth } }
           ).then((res) => res.json())
         );
@@ -38,7 +38,7 @@ export default function CRPDetailScreen() {
        
         if (selections.HeTransferline && selections.HeTransferline !== "없음") {
           const heTransRes = await fetch(
-            `https://brkr-server.onrender.com/excel/HeTransferline/${encodeURIComponent(selections.HeTransferline)}`,
+            `https://brkr-server.onrender.com/excel/HeTransferline/value/${encodeURIComponent(selections.HeTransferline)}`,
             { headers: { Authorization: auth } }
           );
           const heTransJson = await heTransRes.json();

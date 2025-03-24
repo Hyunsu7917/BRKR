@@ -31,7 +31,7 @@ export default function KoreaInventoryScreen({ navigation }) {
       const searchValue = partNumber || partName;
 
       const res = await axios.get(
-        `https://brkr-server.onrender.com/excel/part/${encodeURIComponent(searchValue)}`,
+        `https://brkr-server.onrender.com/excel/part/value/${encodeURIComponent(searchValue)}`,
         {
           auth: {
             username: "BBIOK",
@@ -46,7 +46,8 @@ export default function KoreaInventoryScreen({ navigation }) {
         'Part#': row['Part#'],
         'Serial #': row['Serial #'],
         'PartName': row['PartName'],
-        'Remark': row['Remark']
+        'Remark': row['Remark'],
+        '사용처': row['사용처']
       }));
 
       setData(trimmed);
@@ -71,6 +72,7 @@ export default function KoreaInventoryScreen({ navigation }) {
         <Text style={styles.cell}>{row['Serial #']}</Text>
         <Text style={styles.cell}>{row['PartName']}</Text>
         <Text style={styles.cell}>{row['Remark']}</Text>
+        <Text style={styles.cell}>{row['사용처']}</Text>
       </TouchableOpacity>
     ));
   };
@@ -107,6 +109,7 @@ export default function KoreaInventoryScreen({ navigation }) {
             <Text style={[styles.cell, styles.header]}>Serial #</Text>
             <Text style={[styles.cell, styles.header]}>PartName</Text>
             <Text style={[styles.cell, styles.header]}>Remark</Text>
+            <Text style={[styles.cell, styles.header]}>사용처</Text>
           </View>
         )}
         {renderTable()}
@@ -126,24 +129,7 @@ export default function KoreaInventoryScreen({ navigation }) {
             });
           }}
         />
-        <Button
-          title="서버 업로드"
-          onPress={async () => {
-            try {
-              const res = await axios.post("https://brkr-server.onrender.com/api/sync-usage-to-excel", {}, {
-                auth: {
-                  username: "BBIOK",
-                  password: "Bruker_2025"
-                }
-              });
-              alert("서버 업로드 완료!");
-            } catch (err) {
-              console.error("❌ 서버 업로드 실패:", err);
-              alert("서버 업로드 실패");
-            }
-          }}
-          color="#007bff"
-        />
+        
       </View>
       
     </SafeAreaView>

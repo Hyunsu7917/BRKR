@@ -16,7 +16,9 @@ import { Alert } from 'react-native';
 
 export default function KoreaUsageRecordScreen({ route, navigation }) {
   // ✅ selectedPart 방어 처리
-  const { selectedPart } = route.params || {};
+  const { selectedPart = {} } = route.params || {};
+  const initialRemark = selectedPart["Remark"] || "";
+  const initialUsageNote = selectedPart["사용처"] || ""; // ✅ 요거!
 
   if (!selectedPart) {
     return (
@@ -26,8 +28,8 @@ export default function KoreaUsageRecordScreen({ route, navigation }) {
     );
   }
 
-  const [remark, setRemark] = useState('');
-  const [usageNote, setUsageNote] = useState('');
+  const [remark, setRemark] = useState(initialRemark);
+  const [usageNote, setUsageNote] = useState(initialUsageNote);
 
   const handleSave = async () => {
     const usageData = {
@@ -41,7 +43,7 @@ export default function KoreaUsageRecordScreen({ route, navigation }) {
   
     try {
       await axios.post(
-        'https://brkr-server.onrender.com/api/save-usage',
+        'https://brkr-server.onrender.com/api/update-part-excel',
         usageData,
         {
           auth: {
@@ -53,6 +55,7 @@ export default function KoreaUsageRecordScreen({ route, navigation }) {
           },
         }
       );
+      
       Alert.alert("✅ 저장 완료", "사용 기록이 저장되었습니다.");
       navigation.goBack();
     } catch (err) {
@@ -79,21 +82,18 @@ export default function KoreaUsageRecordScreen({ route, navigation }) {
           <Text style={styles.label}>파트명</Text>
           <Text style={styles.readonly}>{selectedPart['PartName']}</Text>
         </View>
+        
 
         <View style={styles.field}>
-          <Text style={styles.label}>Remark</Text>
-          <View style={styles.pickerWrapper}>
-            <Picker
-              selectedValue={remark}
-              onValueChange={(value) => setRemark(value)}
-            >
-              <Picker.Item label="선택하세요" value="" />
-              <Picker.Item label="사용 예정" value="사용 예정" />
-              <Picker.Item label="사용함" value="사용함" />
-              <Picker.Item label="테스트용" value="테스트용" />
-              <Picker.Item label="대여" value="대여" />
-            </Picker>
-          </View>
+          <Text style={styles.label}>Remark (최대 100자)</Text>
+          <TextInput
+            value={remark}
+            onChangeText={setRemark}
+            maxLength={100}
+            multiline
+            placeholder="사용여부를 기록해주세요."
+            style={styles.textarea}
+          />
         </View>
 
         <View style={styles.field}>

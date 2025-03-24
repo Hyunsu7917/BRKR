@@ -25,10 +25,10 @@ export default function ConsoleAndAutosamplerScreen() {
         const auth = "Basic " + btoa("BBIOK:Bruker_2025");
 
         const [consoleRes, autosamplerRes] = await Promise.all([
-          fetch(`https://brkr-server.onrender.com/excel/Console/${selections.Console}`, {
+          fetch(`https://brkr-server.onrender.com/excel/Console/value/${selections.Console}`, {
             headers: { Authorization: auth },
           }),
-          fetch(`https://brkr-server.onrender.com/excel/Autosampler/${selections.Autosampler}`, {
+          fetch(`https://brkr-server.onrender.com/excel/Autosampler/value/${selections.Autosampler}`, {
             headers: { Authorization: auth },
           }),
         ]);

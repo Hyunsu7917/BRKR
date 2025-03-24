@@ -27,7 +27,7 @@ export default function CPPDetailScreen() {
         const auth = "Basic " + btoa("BBIOK:Bruker_2025");
 
         const requests = cppAccArray.map((item) =>
-          fetch(`https://brkr-server.onrender.com/excel/CPPAcc/${encodeURIComponent(item)}`, {
+          fetch(`https://brkr-server.onrender.com/excel/CPPAcc/value/${encodeURIComponent(item)}`, {
             headers: { Authorization: auth },
           }).then((res) => res.json())
         );

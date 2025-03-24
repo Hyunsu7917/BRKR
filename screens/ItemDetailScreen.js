@@ -21,7 +21,8 @@ export default function ItemDetailScreen() {
 
     const fetchData = async () => {
       try {
-        const res = await axios.get(`${API_BASE}/${sheet}/${encodeURIComponent(value)}`, {
+        const res = await axios.get(`${API_BASE}/${sheet}/value/${encodeURIComponent(value)}`, {
+
           auth: {
             username: "BBIOK",
             password: "Bruker_2025",
