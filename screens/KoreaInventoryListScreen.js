@@ -40,8 +40,14 @@ export default function KoreaInventoryListScreen() {
         <ActivityIndicator size="large" color="#007bff" style={{ marginTop: 30 }} />
       ) : (
         <ScrollView horizontal>
-          <PartInventoryTable data={data} />
+          <ScrollView 
+            style={{ maxHeight: 600 }} 
+            contentContainerStyle={{ flexGrow: 1 }}
+          >
+            <PartInventoryTable data={data} />
+          </ScrollView>
         </ScrollView>
+
       )}
     </SafeAreaView>
   );
