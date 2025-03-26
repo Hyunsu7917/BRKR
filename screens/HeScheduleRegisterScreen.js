@@ -1,100 +1,90 @@
+// 🔼 상단 import
 import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
+  View, Text, TextInput, ScrollView, TouchableOpacity,
+  StyleSheet, KeyboardAvoidingView, Platform
 } from "react-native";
 import axios from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Table, Row } from "../components/TableView";
+import { Table } from "../components/TableView";
 
 export default function HeScheduleRegisterScreen() {
   const [month, setMonth] = useState("");
   const [region, setRegion] = useState("");
   const [customer, setCustomer] = useState("");
+  const [customerInput, setCustomerInput] = useState("");
+
   const [results, setResults] = useState([]);
   const [regionList, setRegionList] = useState([]);
-  const [filteredCustomers, setFilteredCustomers] = useState([]);
-  const [customerInput, setCustomerInput] = useState("");
   const [allCustomers, setAllCustomers] = useState([]);
+  const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [allRows, setAllRows] = useState([]);
-  
 
-
+  // ✅ 초기 데이터 로딩
   useEffect(() => {
     axios.get("https://brkr-server.onrender.com/excel/he/schedule")
       .then(res => {
         const data = res.data;
+        setAllRows(data);
         const uniqueRegions = [...new Set(data.map(row => row["지역"]))];
         const uniqueCustomers = [...new Set(data.map(row => row["고객사"]))];
         setRegionList(["선택 안함", ...uniqueRegions]);
         setAllCustomers(uniqueCustomers);
       })
-      .catch(err => console.error("📛 초기 로딩 에러:", err));
+      .catch(err => {
+        console.error("❌ 초기 로딩 에러:", err);
+      });
   }, []);
 
+  // ✅ 고객사 자동 완성
   useEffect(() => {
-    const searchTerm = (customer || "").toLowerCase();
+    const term = (customerInput || "").toLowerCase();
     const filtered = allCustomers.filter(name =>
-      (name || '').toLowerCase().includes(searchTerm)
+      (name || "").toLowerCase().includes(term)
     );
-    
     setFilteredCustomers(filtered);
   }, [customerInput, allCustomers]);
 
-  const filtered = allRows.filter((row) => {
-    const regionValue = typeof row["지역"] === "string" ? row["지역"] : "";
-    const customerValue = typeof row["고객사"] === "string" ? row["고객사"] : "";
-    const chargeDate = typeof row["충진일"] === "string" ? row["충진일"] : "";
-  
-    const regionMatch = region
-      ? regionValue.toLowerCase().includes(region.toLowerCase())
-      : true;
-  
-    const customerMatch = customer
-      ? customerValue.toLowerCase().includes(customer.toLowerCase())
-      : true;
-  
-    const monthMatch = month
-      ? chargeDate.split("-")[1] === month.padStart(2, "0")
-      : true;
-  
-    return regionMatch && customerMatch && monthMatch;
-  });
-  
-  
-  
-  
-
+  // ✅ 검색 핸들러
   const handleSearch = async () => {
     try {
       const res = await axios.get("https://brkr-server.onrender.com/excel/he/schedule");
-      const all = res.data;
-      const filtered = all.filter(row => {
-        const matchMonth = month ? row["충진일"].slice(5, 7) === month.padStart(2, "0") : true;
-        const matchRegion = region && region !== "선택 안함" ? row["지역"] === region : true;
-        const matchCustomer = customer ? row["고객사"].includes(customer) : true;
+      const rows = res.data;
+
+      const filtered = rows.filter(row => {
+        const chargeDate = typeof row["충진일"] === "string" ? row["충진일"] : "";
+        const regionValue = typeof row["지역"] === "string" ? row["지역"] : "";
+        const customerValue = typeof row["고객사"] === "string" ? row["고객사"] : "";
+
+        const matchMonth = month
+          ? chargeDate.slice(5, 7) === month.padStart(2, "0")
+          : true;
+
+        const matchRegion = region && region !== "선택 안함"
+          ? regionValue.includes(region)
+          : true;
+
+        const matchCustomer = customer
+          ? customerValue.includes(customer)
+          : true;
+
         return matchMonth && matchRegion && matchCustomer;
       });
 
       const grouped = filtered.reduce((acc, row) => {
-        const dateKey = row["충진일"].slice(8, 10);
-        if (!acc[dateKey]) acc[dateKey] = [];
-        acc[dateKey].push(row);
+        const date = typeof row["충진일"] === "string" ? row["충진일"] : "";
+        const day = date.slice(8, 10);
+        if (!acc[day]) acc[day] = [];
+        acc[day].push(row);
         return acc;
       }, {});
 
-      const tableData = Object.entries(grouped).map(([day, rows]) => [
+      const table = Object.entries(grouped).map(([day, rows]) => [
         day,
         rows.map(r => `지역: ${r["지역"]}, 고객사: ${r["고객사"]}, Magnet: ${r["Magnet"]}`).join("\n")
       ]);
-      setResults(tableData);
+
+      setResults(table);
     } catch (err) {
       console.error("❌ 검색 에러:", err);
       setResults([]);
@@ -154,7 +144,6 @@ export default function HeScheduleRegisterScreen() {
             </ScrollView>
           </View>
 
-
           <TouchableOpacity style={styles.button} onPress={handleSearch}>
             <Text style={styles.buttonText}>검색</Text>
           </TouchableOpacity>
@@ -212,18 +201,21 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     fontSize: 14,
   },
-  suggestionBox: {
-    maxHeight: 160,
+  autoCompleteBox: {
+    maxHeight: 150,
     borderWidth: 1,
     borderColor: "#ccc",
+    borderRadius: 6,
+    marginTop: 4,
     marginBottom: 10,
+    backgroundColor: "white",
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 6,
   },
-  suggestionItem: {
-    paddingVertical: 5,
-    color: "#0046d6",
+  autoCompleteItem: {
+    fontSize: 14,
+    paddingVertical: 4,
+    color: "#1e40af",
   },
   button: {
     backgroundColor: "#007bff",
@@ -240,22 +232,4 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "gray",
   },
-  autoCompleteBox: {
-    maxHeight: 150, // 👈 딱 보기 좋은 높이
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 6,
-    marginTop: 4,
-    marginBottom: 10,
-    backgroundColor: "white",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  
-  autoCompleteItem: {
-    fontSize: 14,
-    paddingVertical: 4,
-    color: "#1e40af",
-  },
-  
 });
