@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { ScrollView, Text, StyleSheet, View, Alert, ActivityIndicator } from "react-native";
+import { ScrollView, Text, StyleSheet, View, Alert, ActivityIndicator, Button } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import PartInventoryTable from "@/components/PartInventoryTable";
 
-export default function KoreaInventoryListScreen() {
+export default function KoreaInventoryListScreen({ navigation }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -35,22 +35,28 @@ export default function KoreaInventoryListScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>국내 재고 리스트</Text>
-
+  
       {loading ? (
         <ActivityIndicator size="large" color="#007bff" style={{ marginTop: 30 }} />
       ) : (
         <ScrollView horizontal>
-          <ScrollView 
-            style={{ maxHeight: 600 }} 
+          <ScrollView
+            style={{ maxHeight: 600 }}
             contentContainerStyle={{ flexGrow: 1 }}
+            nestedScrollEnabled={true} // ← 이게 핵심!
           >
             <PartInventoryTable data={data} />
           </ScrollView>
         </ScrollView>
-
       )}
+  
+      {/* ✅ 이전 버튼 추가 */}
+      <View style={{ marginTop: 20 }}>
+        <Button title="이전" onPress={() => navigation.goBack()} />
+      </View>
     </SafeAreaView>
   );
+  
 }
 
 const styles = StyleSheet.create({

@@ -24,41 +24,46 @@ export default function KoreaInventoryScreen({ navigation }) {
   const [selectedRow, setSelectedRow] = useState(null);
 
   const fetchInventory = async () => {
-    if (!partNumber && !partName) {
-      Alert.alert('검색어를 입력해주세요');
-      return;
-    }
-
     try {
-      const searchValue = partNumber || partName;
-
-      const res = await axios.get(
-        `https://brkr-server.onrender.com/excel/part/value/${encodeURIComponent(searchValue)}`,
-        {
-          auth: {
-            username: "BBIOK",
-            password: "Bruker_2025"
-          }
+      const res = await axios.get("https://brkr-server.onrender.com/excel/part/all", {
+        auth: {
+          username: "BBIOK",
+          password: "Bruker_2025"
         }
-      );
-
-      const resultArray = Array.isArray(res.data) ? res.data : [res.data];
-
-      const trimmed = resultArray.map((row) => ({
+      });
+  
+      const allRows = res.data;
+  
+      const filtered = allRows.filter((row) => {
+        const partMatch = partNumber
+          ? (typeof row["Part#"] === "string" && row["Part#"].toLowerCase().includes(partNumber.toLowerCase()))
+          : true;
+      
+        const name = row["PartName"];
+        const nameMatch = partName
+          ? (typeof name === "string" && name.toLowerCase().includes(partName.toLowerCase()))
+          : true;
+      
+        return partMatch && nameMatch;
+      });
+      
+  
+      const trimmed = filtered.map((row) => ({
         'Part#': row['Part#'],
         'Serial #': row['Serial #'],
         'PartName': row['PartName'],
         'Remark': row['Remark'],
         '사용처': row['사용처']
       }));
-
+  
       setData(trimmed);
     } catch (err) {
-      console.error('검색 실패:', err);
-      Alert.alert('검색 결과 없음');
+      console.error("검색 오류:", err);
+      Alert.alert("검색 실패", "재고 데이터를 불러오지 못했습니다.");
       setData([]);
     }
   };
+  
 
   const renderTable = () => {
     return data.map((row, index) => (

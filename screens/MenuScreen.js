@@ -15,8 +15,8 @@ const MenuScreen = ({ navigation }) => {
         <Text style={styles.buttonText}>국내 재고 조회</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={() => console.log("고객 정보 조회 (준비 중)")}>
-        <Text style={styles.buttonText}>고객 정보 조회</Text>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("HeRecordScreen")}>
+        <Text style={styles.buttonText}>헬륨 충진</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("HomeScreen")}>

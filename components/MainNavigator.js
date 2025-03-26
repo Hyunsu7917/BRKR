@@ -12,6 +12,8 @@ import CRPDetailScreen from "../screens/CRPDetailScreen";
 import KoreaInventoryScreen from "../screens/KoreaInventoryScreen";
 import KoreaInventoryListScreen from "../screens/KoreaInventoryListScreen";
 import KoreaUsageRecordScreen from "../screens/KoreaUsageRecordScreen";
+import HeRecordScreen from "../screens/HeRecordScreen";
+import HeScheduleRegisterScreen from "../screens/HeScheduleRegisterScreen";
 const Stack = createStackNavigator();
 
 const MainNavigator = () => {
@@ -28,7 +30,9 @@ const MainNavigator = () => {
         <Stack.Screen name="CRPDetailScreen" component={CRPDetailScreen} />
         <Stack.Screen name="KoreaInventoryScreen" component={KoreaInventoryScreen} />
         <Stack.Screen name="KoreaInventoryListScreen" component={KoreaInventoryListScreen} />
-        <Stack.Screen name="KoreaUsageRecordScreen" component={KoreaUsageRecordScreen} />        
+        <Stack.Screen name="KoreaUsageRecordScreen" component={KoreaUsageRecordScreen} />    
+        <Stack.Screen name="HeRecordScreen" component={HeRecordScreen} />   
+        <Stack.Screen name="HeScheduleRegisterScreen" component={HeScheduleRegisterScreen} />     
       </Stack.Navigator>    
   );
 };
