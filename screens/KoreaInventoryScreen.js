@@ -11,7 +11,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
-
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import { Alert } from 'react-native';
 
 
 export default function KoreaInventoryScreen({ navigation }) {
@@ -76,7 +78,24 @@ export default function KoreaInventoryScreen({ navigation }) {
       </TouchableOpacity>
     ));
   };
+  const downloadPartExcel = async () => {
+    try {
+      const uri = 'https://your-server.onrender.com/excel/part/download';
+      const fileUri = FileSystem.documentDirectory + 'Part.xlsx';
   
+      const downloadRes = await FileSystem.downloadAsync(uri, fileUri);
+      console.log('📥 다운로드 성공:', downloadRes.uri);
+  
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(downloadRes.uri);
+      } else {
+        Alert.alert("다운로드 완료", "파일이 저장되었습니다.");
+      }
+    } catch (error) {
+      console.error('❌ 다운로드 오류:', error);
+      Alert.alert("에러", "파일 다운로드에 실패했습니다.");
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -131,7 +150,10 @@ export default function KoreaInventoryScreen({ navigation }) {
         />
         
       </View>
-      
+      <Button onPress={downloadPartExcel}>
+        동기화!
+      </Button>
+
     </SafeAreaView>
   );
 }
