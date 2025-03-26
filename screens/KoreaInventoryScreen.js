@@ -92,6 +92,15 @@ export default function KoreaInventoryScreen({ navigation }) {
       Alert.alert("에러", "파일 다운로드에 실패했습니다.");
     }
   };
+  const triggerServerSync = async () => {
+    try {
+      const res = await axios.post("https://your-server.com/api/trigger-local-update");
+      Alert.alert("✅", "로컬 엑셀 동기화 완료!");
+    } catch (err) {
+      Alert.alert("❌", "로컬 엑셀 동기화 실패!");
+    }
+  };
+  
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>국내 재고 조회</Text>
@@ -114,7 +123,14 @@ export default function KoreaInventoryScreen({ navigation }) {
       <View style={styles.buttonRow}>
         <Button title="리스트 보기" onPress={() => navigation.navigate('KoreaInventoryListScreen')} />
         <Button title="파트 조회" onPress={fetchInventory} />
-        <Button title="동기화!" onPress={downloadPartExcel} />
+        <Button
+          title="동기화!"
+          onPress={async () => {
+            await downloadPartExcel();     // 1️⃣ 파일 다운로드
+            await triggerServerSync();     // 2️⃣ 서버에서 로컬 파일 갱신
+          }}
+        />
+
       </View>
 
       <ScrollView style={{ marginTop: 10 }}>
