@@ -94,7 +94,7 @@ export default function KoreaInventoryScreen({ navigation }) {
   };
   const triggerServerSync = async () => {
     try {
-      const res = await axios.post("https://your-server.com/api/trigger-local-update");
+      const res = await axios.post("https://brkr-server.onrender.com/api/trigger-local-update");
       Alert.alert("✅", "로컬 엑셀 동기화 완료!");
     } catch (err) {
       Alert.alert("❌", "로컬 엑셀 동기화 실패!");
