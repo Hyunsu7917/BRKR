@@ -23,7 +23,8 @@ const formatDate = (dateStr) => {
 };
 
 export default function HeScheduleRegisterScreen() {
-  const [month, setMonth] = useState("");
+  const [month1, setMonth1] = useState(""); // 충진일 기준
+  const [month2, setMonth2] = useState(""); // 다음충진일 기준
   const [regionInput, setRegionInput] = useState("");
   const [customer, setCustomer] = useState("");
   const [results, setResults] = useState([]);
@@ -89,15 +90,18 @@ export default function HeScheduleRegisterScreen() {
     }
   
     const isEmpty =
-      month.trim() === "" &&
+      month1.trim() === "" &&
+      month2.trim() === "" &&
       selectedRegions.length === 0 &&
       customerInput.trim() === "" &&
       customer.trim() === "";
+
   
     if (isEmpty) {
       setResults([]);
     }
-  }, [month, selectedRegions, customer, customerInput]);
+  }, [month1, month2, selectedRegions, customer, customerInput]);
+
   
   
   
@@ -109,8 +113,8 @@ export default function HeScheduleRegisterScreen() {
       const all = res.data;
       setAllRows(all);
   
-      // 필드가 모두 비어 있으면 결과 리셋
-      if (month.length === 0 && selectedRegions.length === 0 && customer.length === 0) {
+      // 🔸 모든 필터가 비어 있으면 결과 초기화
+      if (month1 === "" && month2 === "" && selectedRegions.length === 0 && customer.length === 0) {
         setResults([]);
         return;
       }
@@ -118,41 +122,38 @@ export default function HeScheduleRegisterScreen() {
       const filtered = all.filter((row) => {
         const chargeDate = typeof row["충진일"] === "string" ? row["충진일"] : "";
         const nextChargeDate = typeof row["다음충진일"] === "string" ? row["다음충진일"] : "";
+        const region = row["지역"] || "";
+        const customerName = row["고객사"] || "";
   
-        // 다중 지역 필터
+        // 🔸 충진일 필터
+        const chargeMonthMatch = month1
+          ? (chargeDate.split("-")[1] || "").padStart(2, "0") === month1.padStart(2, "0")
+          : true;
+  
+        // 🔸 다음충진일 필터
+        const nextChargeMonthMatch = month2
+          ? (nextChargeDate.split("-")[1] || "").padStart(2, "0") === month2.padStart(2, "0")
+          : true;
+  
+        // 🔸 지역 필터 (다중 선택)
         const regionMatch =
-          selectedRegions.length === 0 ||
-          selectedRegions.includes(row["지역"]);
+          selectedRegions.length === 0 || selectedRegions.includes(region);
   
-        // 고객사 필터
+        // 🔸 고객사 필터 (부분 포함)
         const customerMatch =
           customer.length === 0 ||
-          (typeof row["고객사"] === "string" &&
-            row["고객사"].toLowerCase().includes(customer.toLowerCase()));
+          (typeof customerName === "string" &&
+            customerName.toLowerCase().includes(customer.toLowerCase()));
   
-        // 충진일 기준 필터
-        const chargeMonthMatch =
-          month.length === 0 ||
-          (chargeDate.split("-")[1] || "").padStart(2, "0") === month.padStart(2, "0");
-  
-        // 다음충진일 기준 필터 (추가)
-        const nextChargeMonthMatch =
-          month.length === 0 ||
-          (nextChargeDate.split("-")[1] || "").padStart(2, "0") === month.padStart(2, "0");
-  
-        // 충진일 OR 다음충진일 중 하나만 매치되면 통과
-        const monthMatch = chargeMonthMatch || nextChargeMonthMatch;
-  
-        return regionMatch && customerMatch && monthMatch;
+        // 🔸 모든 조건 일치해야 필터 통과
+        return chargeMonthMatch && nextChargeMonthMatch && regionMatch && customerMatch;
       });
   
       setResults(filtered);
     } catch (err) {
-      console.error("검색 에러", err);
+      console.error("🔴 검색 에러:", err);
     }
   };
-  
-  
   
 
   return (
@@ -162,26 +163,47 @@ export default function HeScheduleRegisterScreen() {
           
           {/* 월 입력 */}
           <TextInput
-            style={styles.input}
-            value={month}
-            onChangeText={setMonth}
-            placeholder="월 (예: 03)"
+            value={month1}
+            onChangeText={setMonth1}
+            placeholder="충진일 (예: 03)"
             keyboardType="numeric"
-            maxLength={2}
+            style={{
+              borderWidth: 1,
+              borderColor: "#ccc",
+              borderRadius: 5,
+              padding: 10,
+              marginBottom: 10,
+              backgroundColor: "white", // 배경 하얗게
+            }}
           />
-  
+
+          <TextInput
+            value={month2}
+            onChangeText={setMonth2}
+            placeholder="다음충진일 (예: 03)"
+            keyboardType="numeric"
+            style={{
+              borderWidth: 1,
+              borderColor: "#ccc",
+              borderRadius: 5,
+              padding: 10,
+              marginBottom: 10,
+              backgroundColor: "white", // 배경 하얗게
+            }}
+          />
+            
           {/* 지역 입력창 (터치 시 드롭다운 열림) */}
           <TextInput
             style={styles.input}
             value={regionInput}
             onChangeText={text => {
               setRegionInput(text);
-              setShowRegionDropdown(true);
+              setShowRegionDropdown(true); // 입력 중 드롭다운 열림
             }}
             placeholder="지역 (선택 입력)"
-            onFocus={() => setShowRegionDropdown(true)}
+            onFocus={() => setShowRegionDropdown(true)} // 포커스 시 드롭다운 열림
           />
-  
+
           {/* 선택된 지역 태그 박스 */}
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 10 }}>
             {selectedRegions.map((region, index) => (
@@ -198,14 +220,19 @@ export default function HeScheduleRegisterScreen() {
                 }}
               >
                 <Text>{region}</Text>
-                <TouchableOpacity onPress={() => toggleRegionSelection(region)}>
+                <TouchableOpacity
+                  onPress={() => {
+                    toggleRegionSelection(region);
+                    setRegionInput(""); // ❌ 선택 해제 시 드롭다운 닫음
+                  }}
+                >
                   <Text style={{ marginLeft: 6, color: 'red' }}>❌</Text>
                 </TouchableOpacity>
               </View>
             ))}
           </View>
-  
-          {/* 지역 드롭다운 */}          
+
+          {/* 지역 드롭다운 */}
           {showRegionDropdown && (
             <View style={[styles.dropdownList, { maxHeight: 160 }]}>
               <ScrollView keyboardShouldPersistTaps="handled">
@@ -214,14 +241,34 @@ export default function HeScheduleRegisterScreen() {
                   .map((region, index) => (
                     <TouchableOpacity
                       key={index}
-                      onPress={() => toggleRegionSelection(region)}
+                      onPress={() => {
+                        toggleRegionSelection(region);
+                        setRegionInput("");
+                        // 드롭다운 유지!
+                      }}
                     >
                       <Text style={styles.dropdownItem}>· {region}</Text>
                     </TouchableOpacity>
                   ))}
               </ScrollView>
+
+              {/* ✅ 닫기 버튼 추가 */}
+              <TouchableOpacity
+                style={{
+                  paddingVertical: 10,
+                  alignItems: 'center',
+                  borderTopWidth: 1,
+                  borderColor: '#ccc',
+                  backgroundColor: '#f5f5f5',
+                }}
+                onPress={() => setShowRegionDropdown(false)}
+              >
+                <Text style={{ color: 'blue' }}>⏹ 닫기</Text>
+              </TouchableOpacity>
             </View>
           )}
+
+
 
   
           {/* 고객사 입력창 */}
