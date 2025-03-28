@@ -19,7 +19,7 @@ export default function HeRecordScreen() {
       <View style={styles.buttonBox}>
         <Button
           title="스케줄 확인"
-          onPress={() => navigation.navigate("HeScheduleViewScreen")}
+          onPress={() => navigation.navigate("HeScheduleCalendarScreen")}
         />
       </View>
     </View>
