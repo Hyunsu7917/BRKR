@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,11 +6,13 @@ import {
   Button,
   StyleSheet,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import { Alert } from 'react-native';
+import { checkManualMode } from '@/utils/checkManualMode';
 
 
 
@@ -19,6 +21,7 @@ export default function KoreaUsageRecordScreen({ route, navigation }) {
   const { selectedPart = {} } = route.params || {};
   const initialRemark = selectedPart["Remark"] || "";
   const initialUsageNote = selectedPart["사용처"] || ""; // ✅ 요거!
+  const [locked, setLocked] = useState(false);
 
   if (!selectedPart) {
     return (
@@ -32,6 +35,12 @@ export default function KoreaUsageRecordScreen({ route, navigation }) {
   const [usageNote, setUsageNote] = useState(initialUsageNote);
 
   const handleSave = async () => {
+    const isLocked = await checkManualMode();
+    
+    if (isLocked) {
+      Alert.alert("잠시만요!", "⚠️ 현재 서버에서 파일을 수동 수정 중입니다.");
+      return;
+    }    
     const usageData = {
       "Part#": selectedPart['Part#'],
       "Serial #": selectedPart['Serial #'],
@@ -63,6 +72,17 @@ export default function KoreaUsageRecordScreen({ route, navigation }) {
       Alert.alert("❌ 저장 실패", "서버에 기록을 저장하지 못했습니다.");
     }
   };
+
+  useEffect(() => {
+    const checkLock = async () => {
+      const isLocked = await checkManualMode();
+      setLocked(isLocked);
+      if (isLocked) {
+        Alert.alert("잠시만요!", "⚠️ 현재 서버에서 파일을 수동 수정 중입니다.");
+      }
+    };
+    checkLock();
+  }, []);
   
 
   return (
@@ -112,7 +132,13 @@ export default function KoreaUsageRecordScreen({ route, navigation }) {
       <View style={styles.buttonRow}>
         <Button title="이전" onPress={() => navigation.goBack()} />
         <Button title="홈" onPress={() => navigation.navigate("HomeScreen")} />
-        <Button title="저장" onPress={handleSave} />
+        <TouchableOpacity
+          style={[styles.saveButton, locked && styles.disabledButton]}
+          onPress={handleSave}
+          disabled={locked}
+        >
+          <Text style={styles.saveButtonText}>저장</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -146,4 +172,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 20,
   },
+  // 스타일 예시
+  saveButton: {
+    backgroundColor: '#007AFF',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  disabledButton: {
+    backgroundColor: '#cccccc', // 비활성화 시 색
+  },
+  saveButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  }
+
 });

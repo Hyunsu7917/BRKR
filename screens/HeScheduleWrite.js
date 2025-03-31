@@ -4,6 +4,7 @@ import { useRoute } from "@react-navigation/native";
 import dayjs from "dayjs";
 import axios from "axios"; 
 import { useNavigation } from "@react-navigation/native";
+import { checkManualMode } from '@/utils/checkManualMode';
 
 export default function HeScheduleWrite() {
   const route = useRoute();
@@ -14,6 +15,7 @@ export default function HeScheduleWrite() {
   const [region, setRegion] = useState(row["지역"] || "");
   const [chargeDate, setChargeDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [interval, setInterval] = useState("");
+  const [locked, setLocked] = useState(false);
   const [nextChargeDate, setNextChargeDate] = useState("");
   const [magnet, setMagnet] = useState(row["Magnet"] || "");
   const [chargeCycle, setChargeCycle] = useState(
@@ -40,6 +42,13 @@ export default function HeScheduleWrite() {
   };
 
   const handleSave = async () => {
+     const isLocked = await checkManualMode();
+        
+        if (isLocked) {
+          Alert.alert("잠시만요!", "⚠️ 현재 서버에서 파일을 수동 수정 중입니다.");
+          return;
+        }    
+
     try {
       const payload = {
         고객사: customer,
@@ -63,6 +72,17 @@ export default function HeScheduleWrite() {
       alert("⚠️ 서버 오류!");
     }
   };
+  
+  useEffect(() => {
+      const checkLock = async () => {
+        const isLocked = await checkManualMode();
+        setLocked(isLocked);
+        if (isLocked) {
+          Alert.alert("잠시만요!", "⚠️ 현재 서버에서 파일을 수동 수정 중입니다.");
+        }
+      };
+      checkLock();
+    }, []);
   
 
   return (
