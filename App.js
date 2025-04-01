@@ -4,9 +4,26 @@ import Constants from "expo-constants";
 import { NavigationContainer } from "@react-navigation/native";
 import { SelectionProvider } from "./context/SelectionContext";
 import MainNavigator from "./components/MainNavigator";
+import * as Updates from 'expo-updates';
+
 
 export default function App() {
   useEffect(() => {
+    // Expo OTA 업데이트 체크
+    const checkExpoUpdate = async () => {
+      try {
+        const update = await Updates.checkForUpdateAsync();
+        if (update.isAvailable) {
+          await Updates.fetchUpdateAsync();
+          Alert.alert("업데이트 있음", "앱을 다시 시작합니다.");
+          await Updates.reloadAsync();
+        }
+      } catch (err) {
+        console.log("OTA 업데이트 확인 실패:", err);
+      }
+    };
+    checkExpoUpdate();
+
     const checkForUpdate = async () => {
       try {
         const res = await fetch("https://brkr-server.onrender.com/latest-version.json");

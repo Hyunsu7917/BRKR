@@ -1,147 +1,192 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, Button } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Calendar } from 'react-native-calendars';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
-import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-
-
-const SERVER_URL = 'https://brkr-server.onrender.com';
-
-const HeScheduleCalendar = ({ navigation }) => {
+const HeScheduleCalendarScreen = () => {
+  const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const [heliumData, setHeliumData] = useState([]);
-  const [markedDates, setMarkedDates] = useState({});
   const [selectedDate, setSelectedDate] = useState('');
-  const [dailySchedules, setDailySchedules] = useState([]);
+  const [selectedEntry, setSelectedEntry] = useState(null);
+  const [markedDates, setMarkedDates] = useState({});
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        try {
-          const response = await axios.get(`https://brkr-server.onrender.com/api/helium`);
-          setHeliumData(response.data);
-        } catch (error) {
-          console.error('헬륨 데이터 불러오기 실패:', error);
-        }
-      };
-      fetchData();
-    }, [])
-  );
-  
-
-  useEffect(() => {
-    const latestMap = new Map();
-  
-    heliumData.forEach((entry) => {
+  // ✅ 최신 기록만 추출 (고객사+지역+Magnet 기준)
+  const getLatestUniqueRecords = (data) => {
+    const map = new Map();
+    data.forEach(entry => {
       const key = `${entry['고객사']}_${entry['지역']}_${entry['Magnet']}`;
-      const existing = latestMap.get(key);
-      
-      // Timestamp가 없으면 무시 (이전 기록 필터링)
-      if (!entry.Timestamp) return;
-  
-      if (
-        !existing || 
-        new Date(entry.Timestamp) > new Date(existing.Timestamp)
-      ) {
-        latestMap.set(key, entry);
+      const existing = map.get(key);
+      if (!existing || new Date(entry.Timestamp) > new Date(existing.Timestamp)) {
+        map.set(key, entry);
       }
     });
-  
+    return Array.from(map.values());
+  };
+
+  const fetchHeliumData = async () => {
+    try {
+      const response = await axios.get('https://brkr-server.onrender.com/api/helium');
+      const data = response.data;
+      setHeliumData(data);
+      updateMarkedDates(data);
+    } catch (error) {
+      console.error('데이터 불러오기 실패:', error);
+    }
+  };
+
+  const updateMarkedDates = (data) => {
+    const latestRecords = getLatestUniqueRecords(data);
+    setHeliumData(latestRecords); // 💡 여기에 추가!
     const marked = {};
-    latestMap.forEach((entry) => {
-      const date = entry['충진일']?.slice(0, 10);
+    latestRecords.forEach(entry => {
+      const date = entry['충진일'];
       if (date) {
         marked[date] = {
           marked: true,
-          dotColor: 'blue',
+          dotColor: '#FFA500'
         };
       }
     });
-  
     setMarkedDates(marked);
-  }, [heliumData]);  
-
-  const handleDayPress = (day) => {
-    const date = day.dateString;
-  
-    const latestMap = new Map();
-    heliumData.forEach((entry) => {
-      const key = `${entry['고객사']}_${entry['지역']}_${entry['Magnet']}`;
-      const existing = latestMap.get(key);
-  
-      if (!entry.Timestamp) return;
-  
-      if (
-        !existing || 
-        new Date(entry.Timestamp) > new Date(existing.Timestamp)
-      ) {
-        latestMap.set(key, entry);
-      }
-    });
-  
-    const filtered = Array.from(latestMap.values()).filter(
-      (entry) => entry['충진일']?.slice(0, 10) === date
-    );
-  
-    setSelectedDate(date);
-    setDailySchedules(filtered);
-  }; 
-
-  const handleReservation = (entry) => {
-    navigation.navigate('HeScheduleEditScreen', {
-      고객사: entry['고객사'],
-      지역: entry['지역'],
-      Magnet: entry['Magnet'],
-      date: entry['충진일'],
-      충진주기: entry['충진주기(개월)'], // ✅ 이거 추가
-    });    
   };
   
 
+  useEffect(() => {
+    fetchHeliumData();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const refresh = async () => {
+        await fetchHeliumData();
+  
+        // ✅ 선택한 날짜가 있으면 최신 정보 다시 찾아서 반영
+        if (selectedDate) {
+          const sameDay = heliumData.filter(entry => entry['충진일'] === selectedDate);
+          const map = new Map();
+          sameDay.forEach(entry => {
+            const key = `${entry['고객사']}_${entry['지역']}_${entry['Magnet']}`;
+            const existing = map.get(key);
+            if (!existing || new Date(entry.Timestamp) > new Date(existing.Timestamp)) {
+              map.set(key, entry);
+            }
+          });
+  
+          const latest = Array.from(map.values());
+          setSelectedEntry(latest[0] || null);
+        }
+      };
+  
+      refresh();
+    }, [selectedDate])
+  );
+  
+
+  const handleDayPress = (day) => {
+    const date = day.dateString;
+    setSelectedDate(date);
+
+    const sameDay = heliumData.filter(entry => entry['충진일'] === date);
+    if (sameDay.length === 0) {
+      setSelectedEntry(null);
+      return;
+    }
+
+    const map = new Map();
+    sameDay.forEach(entry => {
+      const key = `${entry['고객사']}_${entry['지역']}_${entry['Magnet']}`;
+      const existing = map.get(key);
+      if (!existing || new Date(entry.Timestamp) > new Date(existing.Timestamp)) {
+        map.set(key, entry);
+      }
+    });
+
+    const latest = Array.from(map.values());
+    setSelectedEntry(latest[0]);
+  };
+
+  const handleNavigate = () => {
+    if (!selectedEntry) return;
+    navigation.navigate('HeScheduleEditScreen', {
+      date: selectedDate,
+      고객사: selectedEntry['고객사'],
+      지역: selectedEntry['지역'],
+      Magnet: selectedEntry['Magnet'],
+      '충진주기(개월)': selectedEntry['충진주기(개월)'] || '',
+      사용량: selectedEntry['사용량'] || '',
+    });
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
-        <Calendar
-          onDayPress={handleDayPress}
-          markedDates={markedDates}
-          markingType={'multi-dot'}
-        />
+    <SafeAreaView style={{ flex: 1, paddingTop: insets.top, backgroundColor: '#fff' }}>
+      <Calendar
+        onDayPress={handleDayPress}
+        markedDates={{
+          ...markedDates,
+          [selectedDate]: {
+            selected: true,
+            selectedColor: '#FFA500',
+            marked: true,
+            dotColor: '#FFA500'
+          },
+        }}
+        theme={{
+          arrowColor: '#FFA500',
+          selectedDayBackgroundColor: '#FFA500',
+          todayTextColor: '#000',
+        }}
+      />
 
-        {selectedDate && (
-          <View style={styles.detailBox}>
-            <Text style={styles.dateTitle}>{selectedDate} 일정</Text>
-            <ScrollView style={styles.scrollArea}>
-              {dailySchedules.map((entry, index) => (
-                <View key={index} style={styles.entryBox}>
-                  <Text style={styles.customer}>{entry['고객사']}</Text>
-                  <Text>{entry['지역']} / {entry['Magnet']}</Text>
-                  <Text style={{ color: entry['예약여부'] === 'Y' ? 'green' : 'red' }}>
-                    {entry['예약여부'] === 'Y' ? '✅ 예약됨' : '❌ 미예약'}
-                  </Text>
-
-                  <Button
-                    title={entry['예약여부'] === 'Y' ? '예약 수정' : '예약하기'}
-                    onPress={() => handleReservation(entry)}
-                    color={entry['예약여부'] === 'Y' ? 'orange' : undefined}
-                  />
-                </View>
-              ))}
-            </ScrollView>
+      {selectedDate && selectedEntry && (
+        <ScrollView contentContainerStyle={styles.entryBox}>
+          <Text style={styles.dateTitle}>{selectedDate} 일정</Text>
+          <View style={styles.infoBox}>
+            <Text style={styles.customer}>{selectedEntry['고객사']}</Text>
+            <Text>{selectedEntry['지역']} / {selectedEntry['Magnet']}</Text>
+            <Text style={{ color: 'green', marginTop: 4 }}>✅ 예약됨</Text>
+            <TouchableOpacity style={styles.button} onPress={handleNavigate}>
+              <Text style={styles.buttonText}>예약 수정</Text>
+            </TouchableOpacity>
           </View>
-        )}
-      </View>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };
 
-export default HeScheduleCalendar;
+export default HeScheduleCalendarScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10 },
-  detailBox: { marginTop: 15, padding: 10, backgroundColor: '#f2f2f2', borderRadius: 10 },
-  dateTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 5 },
-  scrollArea: { maxHeight: 300 },
-  entryBox: { marginBottom: 10, padding: 8, backgroundColor: 'white', borderRadius: 8 },
-  customer: { fontWeight: 'bold' },
+  entryBox: {
+    marginTop: 12,
+    paddingHorizontal: 20
+  },
+  dateTitle: {
+    fontWeight: 'bold',
+    marginBottom: 8
+  },
+  infoBox: {
+    backgroundColor: '#f7f7f7',
+    padding: 12,
+    borderRadius: 10,
+    elevation: 1
+  },
+  customer: {
+    fontWeight: 'bold',
+    marginBottom: 4
+  },
+  button: {
+    marginTop: 12,
+    backgroundColor: '#FFA500',
+    paddingVertical: 10,
+    borderRadius: 6
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: '#fff',
+    fontWeight: 'bold'
+  }
 });

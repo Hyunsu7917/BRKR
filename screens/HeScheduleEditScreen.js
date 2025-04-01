@@ -11,11 +11,10 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
-import { CalendarDays } from 'lucide-react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const HeScheduleEditScreen = ({ route, navigation }) => {
-  const insets = useSafeAreaInsets(); // 💡 안전 영역 값 자동 감지
+  const insets = useSafeAreaInsets();
 
   const {
     date,
@@ -37,7 +36,6 @@ const HeScheduleEditScreen = ({ route, navigation }) => {
   const [period, setPeriod] = useState('');
   const [reservation, setReservation] = useState('Y');
   const [usageAmount, setUsageAmount] = useState('');
-
   const [formattedDate, setFormattedDate] = useState(format(selectedDate, 'yyyy-MM-dd'));
 
   useEffect(() => {
@@ -56,6 +54,7 @@ const HeScheduleEditScreen = ({ route, navigation }) => {
           충진일: formattedDate,
           충진주기: period === '' ? '0' : period,
           예약여부: reservation,
+          사용량: usageAmount,
           Timestamp: new Date().toISOString()
         })
       });
@@ -74,8 +73,7 @@ const HeScheduleEditScreen = ({ route, navigation }) => {
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.dateHeader}>
-        <Text style={styles.dateText}>{formattedDate}</Text>
-        <CalendarDays size={20} color="black" style={{ marginLeft: 8 }} />
+        <Text style={styles.dateText}>📅 {formattedDate}</Text>
       </TouchableOpacity>
 
       {modalVisible && (

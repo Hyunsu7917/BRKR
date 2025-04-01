@@ -22,6 +22,13 @@ export default function HeRecordScreen() {
           onPress={() => navigation.navigate("HeScheduleCalendarScreen")}
         />
       </View>
+
+      <View style={styles.buttonBox}>
+        <Button
+          title="헬륨양 조회"
+          onPress={() => navigation.navigate("HeUsageStatsScreen")}
+        />
+      </View>
     </View>
   );
 }

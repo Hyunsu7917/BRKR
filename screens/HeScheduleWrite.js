@@ -21,6 +21,7 @@ export default function HeScheduleWrite() {
   const [chargeCycle, setChargeCycle] = useState(
     Number(row["충진주기(개월)"]) || 6
   );
+  const [heliumAmount, setHeliumAmount] = useState('');
 
   useEffect(() => {
     if (chargeDate && interval) {
@@ -117,6 +118,13 @@ export default function HeScheduleWrite() {
 
 
       <Text>👉 다음충진일: {nextChargeDate}</Text>
+      <TextInput
+        placeholder="사용량 (ℓ)"
+        keyboardType="numeric"
+        value={heliumAmount}
+        onChangeText={setHeliumAmount}
+      />
+
 
       <TouchableOpacity
         onPress={handleSave}
