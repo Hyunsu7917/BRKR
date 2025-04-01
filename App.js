@@ -6,8 +6,13 @@ import { SelectionProvider } from "./context/SelectionContext";
 import MainNavigator from "./components/MainNavigator";
 import * as Updates from 'expo-updates';
 
-
 export default function App() {
+  useEffect(() => {
+    console.log("✅ 현재 앱 runtimeVersion:", Updates.runtimeVersion);
+    console.log("🆔 OTA 업데이트 ID:", Updates.updateId);
+    console.log("📦 OTA 적용 여부:", Updates.isEmbeddedLaunch ? '기본 번들' : 'OTA 적용됨');
+  }, []);
+  
   useEffect(() => {
     // Expo OTA 업데이트 체크
     const checkExpoUpdate = async () => {
