@@ -118,14 +118,7 @@ export default function HeScheduleWrite() {
 
 
       <Text>👉 다음충진일: {nextChargeDate}</Text>
-      <TextInput
-        placeholder="사용량 (ℓ)"
-        keyboardType="numeric"
-        value={heliumAmount}
-        onChangeText={setHeliumAmount}
-      />
-
-
+      
       <TouchableOpacity
         onPress={handleSave}
         style={{

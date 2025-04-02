@@ -27,7 +27,11 @@ export default function App() {
     // Expo OTA 업데이트 체크
     const checkExpoUpdate = async () => {
       try {
-        const update = await Updates.checkForUpdateAsync();
+        const update = await Updates.checkForUpdateAsync({
+          requestHeaders: {
+            'expo-channel-name': 'main', // ← eas update --branch main 할 때 사용한 이름과 동일해야 함
+          },
+        });        
         if (update.isAvailable) {
           await Updates.fetchUpdateAsync();
           Alert.alert("업데이트 있음", "앱을 다시 시작합니다.");

@@ -59,7 +59,9 @@ const HeUsageStatsScreen = () => {
   };
 
   const handleSelectMonth = (month) => {
-    const records = heliumData.filter(entry => entry['충진일'].startsWith(month));
+    const records = heliumData.filter(
+      entry => typeof entry['충진일'] === 'string' && entry['충진일'].startsWith(month)
+    );    
     const map = new Map();
     records.forEach(entry => {
       const key = `${entry['고객사']}_${entry['지역']}_${entry['Magnet']}`;

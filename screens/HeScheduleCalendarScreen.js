@@ -10,7 +10,7 @@ const HeScheduleCalendarScreen = () => {
   const insets = useSafeAreaInsets();
   const [heliumData, setHeliumData] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
-  const [selectedEntry, setSelectedEntry] = useState(null);
+  const [selectedEntries, setSelectedEntries] = useState([]);
   const [markedDates, setMarkedDates] = useState({});
 
   // ✅ 최신 기록만 추출 (고객사+지역+Magnet 기준)
@@ -88,25 +88,11 @@ const HeScheduleCalendarScreen = () => {
   const handleDayPress = (day) => {
     const date = day.dateString;
     setSelectedDate(date);
-
-    const sameDay = heliumData.filter(entry => entry['충진일'] === date);
-    if (sameDay.length === 0) {
-      setSelectedEntry(null);
-      return;
-    }
-
-    const map = new Map();
-    sameDay.forEach(entry => {
-      const key = `${entry['고객사']}_${entry['지역']}_${entry['Magnet']}`;
-      const existing = map.get(key);
-      if (!existing || new Date(entry.Timestamp) > new Date(existing.Timestamp)) {
-        map.set(key, entry);
-      }
-    });
-
-    const latest = Array.from(map.values());
-    setSelectedEntry(latest[0]);
+  
+    const sameDayEntries = heliumData.filter(entry => entry['충진일'] === date);
+    setSelectedEntries(sameDayEntries);  // 🔥 배열 그대로 저장!
   };
+  
 
   const handleNavigate = () => {
     if (!selectedEntry) return;
@@ -140,19 +126,39 @@ const HeScheduleCalendarScreen = () => {
         }}
       />
 
-      {selectedDate && selectedEntry && (
+      {selectedDate && selectedEntries.length > 0 && (
         <ScrollView contentContainerStyle={styles.entryBox}>
-          <Text style={styles.dateTitle}>{selectedDate} 일정</Text>
-          <View style={styles.infoBox}>
-            <Text style={styles.customer}>{selectedEntry['고객사']}</Text>
-            <Text>{selectedEntry['지역']} / {selectedEntry['Magnet']}</Text>
-            <Text style={{ color: 'green', marginTop: 4 }}>✅ 예약됨</Text>
-            <TouchableOpacity style={styles.button} onPress={handleNavigate}>
-              <Text style={styles.buttonText}>예약 수정</Text>
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.dateTitle}>{selectedDate} 일정 ({selectedEntries.length}건)</Text>
+          {selectedEntries.map((entry, index) => (
+            <View key={index} style={styles.infoBox}>
+              <Text style={styles.customer}>{entry['고객사']}</Text>
+              <Text>{entry['지역']} / {entry['Magnet']}</Text>
+              <Text style={{ color: entry['예약여부'] === 'Y' ? 'green' : 'red', marginTop: 4 }}>
+                {entry['예약여부'] === 'Y' ? '✅ 예약됨' : '❌ 미예약'}
+              </Text>
+              {entry['사용량'] && (
+                <Text style={{ marginTop: 4 }}>사용량: {entry['사용량']} ℓ</Text>
+              )}
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() =>
+                  navigation.navigate('HeScheduleEditScreen', {
+                    date: entry['충진일'],
+                    고객사: entry['고객사'],
+                    지역: entry['지역'],
+                    Magnet: entry['Magnet'],
+                    '충진주기(개월)': entry['충진주기(개월)'] || '',
+                    사용량: entry['사용량'] || ''
+                  })
+                }
+              >
+                <Text style={styles.buttonText}>예약 수정</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
         </ScrollView>
       )}
+
     </SafeAreaView>
   );
 };
