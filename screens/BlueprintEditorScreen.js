@@ -1,8 +1,8 @@
-// BlueprintEditorScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import Animated, { useAnimatedGestureHandler, useSharedValue, useAnimatedStyle } from 'react-native-reanimated';
+import DraggableGridItem from '@/components/DraggableGridItem';
 
 const icons = [
   { icon: 'Magnet', label: 'Magnet' },
@@ -36,94 +36,69 @@ const iconMap = {
   Workstation: require('@/assets/blueprint-icons/WorkstationDesk.png'),
 };
 
-// 상단은 그대로 유지
-
 export default function BlueprintEditorScreen() {
-    const [roomWidth, setRoomWidth] = useState(700);
-    const [roomHeight, setRoomHeight] = useState(500);
-    const [gridItems, setGridItems] = useState([]);
-  
-    const addItem = (icon, label) => {
-      setGridItems(prev => [...prev, { icon, label, id: Date.now() + Math.random() }]);
-    };
-  
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>📐 도면 만들기 (Snap to Grid)</Text>
-  
-        <View style={styles.inputRow}>
-          <View style={styles.inputBox}>
-            <Text style={styles.inputLabel}>가로</Text>
-            <TextInput
-              value={roomWidth.toString()}
-              onChangeText={text => setRoomWidth(Number(text))}
-              style={styles.input}
-              keyboardType="numeric"
-            />
-          </View>
-          <View style={styles.inputBox}>
-            <Text style={styles.inputLabel}>세로</Text>
-            <TextInput
-              value={roomHeight.toString()}
-              onChangeText={text => setRoomHeight(Number(text))}
-              style={styles.input}
-              keyboardType="numeric"
-            />
-          </View>
+  const [roomWidth, setRoomWidth] = useState(700);
+  const [roomHeight, setRoomHeight] = useState(500);
+  const [gridItems, setGridItems] = useState([]);
+
+  const addItem = (icon, label) => {
+    const id = Date.now() + Math.random();
+    setGridItems(prev => [...prev, { id, icon, label }]);
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>📐 도면 만들기 (Snap to Grid)</Text>
+
+      <View style={styles.inputRow}>
+        <View style={styles.inputBox}>
+          <Text style={styles.inputLabel}>가로</Text>
+          <TextInput
+            value={roomWidth.toString()}
+            onChangeText={text => setRoomWidth(Number(text))}
+            style={styles.input}
+            keyboardType="numeric"
+          />
         </View>
-  
-        <View style={styles.iconRow}>
-          {icons.map((item, index) => (
-            <TouchableOpacity key={index} onPress={() => addItem(item.icon, item.label)}>
-              <Image source={iconMap[item.icon]} style={styles.iconImage} />
-              <Text style={styles.iconLabel}>{item.label}</Text>
-            </TouchableOpacity>
-          ))}
+        <View style={styles.inputBox}>
+          <Text style={styles.inputLabel}>세로</Text>
+          <TextInput
+            value={roomHeight.toString()}
+            onChangeText={text => setRoomHeight(Number(text))}
+            style={styles.input}
+            keyboardType="numeric"
+          />
         </View>
-  
-        <Text style={styles.layoutLabel}>📐 배치도</Text>
-  
-        <ScrollView horizontal contentContainerStyle={{ minWidth: roomWidth }}>
-          <ScrollView contentContainerStyle={{ minHeight: roomHeight }}>
-            <View style={[styles.gridContainer, { width: roomWidth, height: roomHeight }]}>
-              {gridItems.map((item, index) => {
-                const translateX = useSharedValue(0);
-                const translateY = useSharedValue(0);
-  
-                const gestureHandler = useAnimatedGestureHandler({
-                  onStart: (_, ctx) => {
-                    ctx.startX = translateX.value;
-                    ctx.startY = translateY.value;
-                  },
-                  onActive: (event, ctx) => {
-                    translateX.value = ctx.startX + event.translationX;
-                    translateY.value = ctx.startY + event.translationY;
-                  },
-                });
-  
-                const style = useAnimatedStyle(() => ({
-                  transform: [
-                    { translateX: translateX.value },
-                    { translateY: translateY.value },
-                  ],
-                }));
-  
-                return (
-                  <PanGestureHandler key={item.id} onGestureEvent={gestureHandler}>
-                    <Animated.View style={[styles.gridItem, style]}>
-                      <Image source={iconMap[item.icon]} style={styles.iconImage} />
-                      <Text style={styles.iconLabel}>{item.label}</Text>
-                    </Animated.View>
-                  </PanGestureHandler>
-                );
-              })}
-            </View>
-          </ScrollView>
-        </ScrollView>
       </View>
-    );
-  }
-  
+
+      <View style={styles.iconRow}>
+        {icons.map((item, index) => (
+          <TouchableOpacity key={index} onPress={() => addItem(item.icon, item.label)}>
+            <Image source={iconMap[item.icon]} style={styles.iconImage} />
+            <Text style={styles.iconLabel}>{item.label}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <Text style={styles.layoutLabel}>📐 배치도</Text>
+
+      <ScrollView horizontal contentContainerStyle={{ minWidth: roomWidth }}>
+        <ScrollView contentContainerStyle={{ minHeight: roomHeight }}>
+          <View style={[styles.gridContainer, { width: roomWidth, height: roomHeight }]}>
+            {gridItems.map((item) => (
+              <DraggableGridItem
+                key={item.id}
+                item={item}
+                iconSource={iconMap[item.icon]}
+              />
+            ))}
+          </View>
+
+        </ScrollView>
+      </ScrollView>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 40, paddingHorizontal: 10, backgroundColor: '#fff' },
