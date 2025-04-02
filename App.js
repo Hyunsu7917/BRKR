@@ -14,6 +14,16 @@ export default function App() {
   }, []);
   
   useEffect(() => {
+    console.log("✅ 현재 앱 runtimeVersion:", Updates.runtimeVersion);
+    Updates.checkForUpdateAsync()
+      .then((update) => {
+        console.log("✅ 업데이트 있음:", update.isAvailable);
+      })
+      .catch((err) => {
+        console.log("❌ 업데이트 확인 실패:", err);
+      });
+  }, []);
+  useEffect(() => {
     // Expo OTA 업데이트 체크
     const checkExpoUpdate = async () => {
       try {
