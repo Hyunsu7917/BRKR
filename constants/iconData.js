@@ -2,7 +2,7 @@
 
 export const ICON_SPECS = {
     Magnet: { width: 1285, height: 1154 },
-    Nanobay: { width: 450, height: 880 },
+    Nanobay: { width: 450, height: 1000 },
     Onebay: { width: 690, height: 1100 },
     Twobay: { width: 1310, height: 1200 },
     SampleCase: { width: 200, height: 200 },
