@@ -36,117 +36,94 @@ const iconMap = {
   Workstation: require('@/assets/blueprint-icons/WorkstationDesk.png'),
 };
 
+// 상단은 그대로 유지
+
 export default function BlueprintEditorScreen() {
-  const [roomWidth, setRoomWidth] = useState(700);
-  const [roomHeight, setRoomHeight] = useState(500);
-  const [gridItems, setGridItems] = useState([]);
-
-  const addItem = (icon, label) => {
-    const translateX = useSharedValue(0);
-    const translateY = useSharedValue(0);
+    const [roomWidth, setRoomWidth] = useState(700);
+    const [roomHeight, setRoomHeight] = useState(500);
+    const [gridItems, setGridItems] = useState([]);
   
-    const dragHandler = useAnimatedGestureHandler({
-      onStart: (_, ctx) => {
-        ctx.startX = translateX.value;
-        ctx.startY = translateY.value;
-      },
-      onActive: (event, ctx) => {
-        translateX.value = ctx.startX + event.translationX;
-        translateY.value = ctx.startY + event.translationY;
-      },
-    });
+    const addItem = (icon, label) => {
+      setGridItems(prev => [...prev, { icon, label, id: Date.now() + Math.random() }]);
+    };
   
-    setGridItems(prev => [
-      ...prev,
-      {
-        icon,
-        label,
-        translateX,
-        translateY,
-        dragHandler,
-      },
-    ]);
-  };
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>📐 도면 만들기 (Snap to Grid)</Text>
   
-
-  const onDrag = index => {
-    return useAnimatedGestureHandler({
-      onStart: (_, ctx) => {
-        ctx.startX = gridItems[index].translateX.value;
-        ctx.startY = gridItems[index].translateY.value;
-      },
-      onActive: (event, ctx) => {
-        gridItems[index].translateX.value = ctx.startX + event.translationX;
-        gridItems[index].translateY.value = ctx.startY + event.translationY;
-      },
-    });
-  };
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>📐 도면 만들기 (Snap to Grid)</Text>
-
-      <View style={styles.inputRow}>
-        <View style={styles.inputBox}>
-          <Text style={styles.inputLabel}>가로</Text>
-          <TextInput
-            value={roomWidth.toString()}
-            onChangeText={text => setRoomWidth(Number(text))}
-            style={styles.input}
-            keyboardType="numeric"
-          />
-        </View>
-        <View style={styles.inputBox}>
-          <Text style={styles.inputLabel}>세로</Text>
-          <TextInput
-            value={roomHeight.toString()}
-            onChangeText={text => setRoomHeight(Number(text))}
-            style={styles.input}
-            keyboardType="numeric"
-          />
-        </View>
-      </View>
-
-      <View style={styles.iconRow}>
-        {icons.map((item, index) => (
-          <TouchableOpacity key={index} onPress={() => addItem(item.icon, item.label)}>
-            <Image source={iconMap[item.icon]} style={styles.iconImage} />
-            <Text style={styles.iconLabel}>{item.label}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <Text style={styles.layoutLabel}>📐 배치도</Text>
-
-      <ScrollView
-        horizontal
-        contentContainerStyle={{ minWidth: roomWidth }}
-      >
-        <ScrollView contentContainerStyle={{ minHeight: roomHeight }}>
-          <View style={[styles.gridContainer, { width: roomWidth, height: roomHeight }]}>
-            {gridItems.map((item, index) => {
-              const style = useAnimatedStyle(() => ({
-                transform: [
-                  { translateX: item.translateX.value },
-                  { translateY: item.translateY.value },
-                ],
-              }));
-              return (
-                <PanGestureHandler key={index} onGestureEvent={item.dragHandler}>
-                    <Animated.View style={[styles.gridItem, style]}>
-                        <Image source={iconMap[item.icon]} style={styles.iconImage} />
-                        <Text style={styles.iconLabel}>{item.label}</Text>
-                    </Animated.View>
-                </PanGestureHandler>
-
-              );
-            })}
+        <View style={styles.inputRow}>
+          <View style={styles.inputBox}>
+            <Text style={styles.inputLabel}>가로</Text>
+            <TextInput
+              value={roomWidth.toString()}
+              onChangeText={text => setRoomWidth(Number(text))}
+              style={styles.input}
+              keyboardType="numeric"
+            />
           </View>
+          <View style={styles.inputBox}>
+            <Text style={styles.inputLabel}>세로</Text>
+            <TextInput
+              value={roomHeight.toString()}
+              onChangeText={text => setRoomHeight(Number(text))}
+              style={styles.input}
+              keyboardType="numeric"
+            />
+          </View>
+        </View>
+  
+        <View style={styles.iconRow}>
+          {icons.map((item, index) => (
+            <TouchableOpacity key={index} onPress={() => addItem(item.icon, item.label)}>
+              <Image source={iconMap[item.icon]} style={styles.iconImage} />
+              <Text style={styles.iconLabel}>{item.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+  
+        <Text style={styles.layoutLabel}>📐 배치도</Text>
+  
+        <ScrollView horizontal contentContainerStyle={{ minWidth: roomWidth }}>
+          <ScrollView contentContainerStyle={{ minHeight: roomHeight }}>
+            <View style={[styles.gridContainer, { width: roomWidth, height: roomHeight }]}>
+              {gridItems.map((item, index) => {
+                const translateX = useSharedValue(0);
+                const translateY = useSharedValue(0);
+  
+                const gestureHandler = useAnimatedGestureHandler({
+                  onStart: (_, ctx) => {
+                    ctx.startX = translateX.value;
+                    ctx.startY = translateY.value;
+                  },
+                  onActive: (event, ctx) => {
+                    translateX.value = ctx.startX + event.translationX;
+                    translateY.value = ctx.startY + event.translationY;
+                  },
+                });
+  
+                const style = useAnimatedStyle(() => ({
+                  transform: [
+                    { translateX: translateX.value },
+                    { translateY: translateY.value },
+                  ],
+                }));
+  
+                return (
+                  <PanGestureHandler key={item.id} onGestureEvent={gestureHandler}>
+                    <Animated.View style={[styles.gridItem, style]}>
+                      <Image source={iconMap[item.icon]} style={styles.iconImage} />
+                      <Text style={styles.iconLabel}>{item.label}</Text>
+                    </Animated.View>
+                  </PanGestureHandler>
+                );
+              })}
+            </View>
+          </ScrollView>
         </ScrollView>
-      </ScrollView>
-    </View>
-  );
-}
+      </View>
+    );
+  }
+  
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 40, paddingHorizontal: 10, backgroundColor: '#fff' },
