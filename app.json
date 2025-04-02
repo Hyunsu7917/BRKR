@@ -2,8 +2,8 @@
   "expo": {
     "name": "BRKR",
     "slug": "BRKR-NEW",
-    "version": "1.0.6",
-    "runtimeVersion": "1.0.6",
+    "version": "1.0.7",
+    "runtimeVersion": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/images/brukericon.png",
     "userInterfaceStyle": "light",

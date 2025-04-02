@@ -18,6 +18,7 @@ import HeScheduleWrite from "../screens/HeScheduleWrite";
 import HeScheduleCalendarScreen from "../screens/HeScheduleCalendarScreen";
 import HeScheduleEditScreen from "../screens/HeScheduleEditScreen";
 import HeUsageStatsScreen from "../screens/HeUsageStatsScreen";
+import BlueprintEditorScreen from "../screens/BlueprintEditorScreen";
 const Stack = createStackNavigator();
 
 const MainNavigator = () => {
@@ -40,7 +41,8 @@ const MainNavigator = () => {
         <Stack.Screen name="HeScheduleWrite" component={HeScheduleWrite} />
         <Stack.Screen name="HeScheduleCalendarScreen" component={HeScheduleCalendarScreen} />
         <Stack.Screen name="HeScheduleEditScreen" component={HeScheduleEditScreen} /> 
-        <Stack.Screen name="HeUsageStatsScreen" component={HeUsageStatsScreen} />               
+        <Stack.Screen name="HeUsageStatsScreen" component={HeUsageStatsScreen} />    
+        <Stack.Screen name="BlueprintEditorScreen" component={BlueprintEditorScreen} />             
       </Stack.Navigator>    
   );
 };
