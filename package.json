@@ -40,7 +40,8 @@
     "react-native-screens": "~4.4.0",
     "react-native-vector-icons": "^10.2.0",
     "tailwind-variants": "^1.0.0",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "@expo/vector-icons": "^14.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

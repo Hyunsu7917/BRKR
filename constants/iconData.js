@@ -2,16 +2,16 @@
 
 export const ICON_SPECS = {
     Magnet: { width: 1285, height: 1154 },
-    Nanobay: { width: 900, height: 600 },
-    Onebay: { width: 900, height: 650 },
-    Twobay: { width: 900, height: 700 },
-    SampleCase: { width: 600, height: 600 },
-    "LN2 Dewar": { width: 500, height: 500 },
-    "Prodigy unit": { width: 750, height: 600 },
-    "CryoPlatform": { width: 800, height: 600 },
-    "He Cylinder": { width: 300, height: 1200 },
-    "Indoor unit": { width: 1000, height: 350 },
-    HPPR: { width: 1200, height: 900 },
-    BCU: { width: 600, height: 500 },
-    "Workstation Desk": { width: 1400, height: 700 }
+    Nanobay: { width: 450, height: 880 },
+    Onebay: { width: 690, height: 1100 },
+    Twobay: { width: 1310, height: 1200 },
+    SampleCase: { width: 200, height: 200 },
+    "LN2 Dewar": { width: 400, height: 400 },
+    "Prodigy unit": { width: 600, height: 400 },
+    "CryoPlatform": { width: 740, height: 740 },
+    "He Cylinder": { width: 150, height: 150 },
+    "Indoor unit": { width: 270, height: 600 },
+    HPPR: { width: 350, height: 300 },
+    BCU: { width: 400, height: 300 },
+    "Workstation Desk": { width: 1400, height: 1000 }
   };
